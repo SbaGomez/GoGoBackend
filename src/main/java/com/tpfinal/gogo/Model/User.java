@@ -4,31 +4,28 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Data
 @Entity
-public class User
-{
+public class User {
 
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "nombre")
+    @Column(name = "nombre", nullable = false)
     private String nombre;
-    @Column(name = "apellido")
+    @Column(name = "apellido", nullable = false)
     private String apellido;
-    @Column(name = "dni")
+    @Column(name = "dni", nullable = false)
     private String dni;
-    @Column(name = "sexo")
+    @Column(name = "sexo", nullable = false)
     private String sexo;
-    @Column(name = "edad")
+    @Column(name = "edad", nullable = false)
     private int edad;
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
-    @Column(name = "clave")
+    @Column(name = "clave", nullable = false)
     private String clave;
 }
