@@ -7,6 +7,7 @@ import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
+import com.sendgrid.helpers.mail.objects.Personalization;
 import com.tpfinal.gogo.Exceptions.*;
 import com.tpfinal.gogo.Model.User;
 import com.tpfinal.gogo.Service.UserService;
@@ -52,7 +53,13 @@ public class UserController {
 
             Mail mail = new Mail(from, subject, to, content);
 
+            Personalization personalization = new Personalization();
+            personalization.addTo(to);
+            personalization.addDynamicTemplateData("code", verificationCode);
+            mail.addPersonalization(personalization);
             mail.setTemplateId("d-24471fdde8f84f92ab5033a5c55009d9");
+            mail.getPersonalization().get(0).addDynamicTemplateData("code", verificationCode);
+
 
             SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
             Request request = new Request();
