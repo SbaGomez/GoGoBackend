@@ -1,5 +1,6 @@
 package com.tpfinal.gogo.Service;
 
+import com.tpfinal.gogo.Exceptions.*;
 import com.tpfinal.gogo.Model.User;
 import com.tpfinal.gogo.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,79 +10,82 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
-public class UserService
-{
-    private final UserRepository userRepository;
+public class UserService {
+    private final UserRepository ur;
 
     @Autowired
-    public UserService(UserRepository userRepository)
-    {
-        this.userRepository = userRepository;
+    public UserService(UserRepository userRepository) {
+        this.ur = userRepository;
     }
 
-    public ResponseEntity<User> addUser(User user)
-    {
-        try
-        {
-            // Validar el objeto de entrada
-            if (user == null)
-            {
-                return ResponseEntity.badRequest().build();
+    public User addUser(User user) {
+        return ur.save(user);
+    }
+
+    public List<User> getAll() {
+        return ur.findAll();
+    }
+
+    public Integer getTotal() {
+        try {
+            return ur.findAll().size();
+        } catch (Exception e) {
+            throw new InternalServerException("Hubo un error al recuperar el total de libros");
+        }
+    }
+
+    public User updateUser(Integer id, User user) {
+        User u = ur.findById(id).orElse(null);
+        if (u != null) {
+            if ((user.getNombre()) != null) {
+                u.setNombre(user.getNombre());
             }
-
-            User savedUser = userRepository.save(user);
-            return ResponseEntity.ok(this.findByDni(savedUser.getDni()));
+            if ((user.getApellido()) != null) {
+                u.setApellido(user.getApellido());
+            }
+            if ((user.getDni()) != null) {
+                u.setDni(user.getDni());
+            }
+            if ((user.getSexo()) != null) {
+                u.setSexo(user.getSexo());
+            }
+            if (user.getEdad() != 0) {
+                u.setEdad(user.getEdad());
+            }
+            if (user.getEmail() != null) {
+                u.setEmail(user.getEmail());
+            }
+            if (user.getClave() != null) {
+                u.setClave(user.getClave());
+            }
+            ur.save(u);
         }
-        catch (Exception e)
-        {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        return u;
     }
 
-    public User findByDni(String dni)
-    {
-        return (User) Arrays.stream(userRepository.findAll().toArray()).filter(usr -> ((User) usr).getDni().equals(dni)).findFirst().orElseThrow(() -> new HttpClientErrorException(BAD_REQUEST, "Usuario no encontrado"));
+    public ResponseEntity<String> deleteUser(Integer id) {
+        if (ur.existsById(id)) {
+            try {
+                ur.deleteById(id);
+                return ResponseEntity.status(OK).body("Usuario " + id + " eliminado con éxito");
+            } catch (Exception e) {
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
+            }
+        }
+        return ResponseEntity.status(NOT_FOUND).body("Usuario " + id + " no encontrado");
     }
 
-    public User getUser(Integer id)
-    {
-        return userRepository.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, "El usuario con el identificador: " + id + " no encontrado."));
+    public User getUser(Integer id) {
+        return ur.findById(id).orElse(null);
     }
 
-    public ResponseEntity<?> deleteUser(Integer id)
-    {
-        try
-        {
-            userRepository.deleteById(id);
-            return ResponseEntity.status(OK).build();
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
-        }
-
-    }
-
-    public ResponseEntity<User> updateUser(Integer id, User user)
-    {
-        try{
-            User usr = userRepository.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, "El usuario con el identificador: " + id + " no encontrado."));
-            usr.setEdad(user.getEdad());
-            usr.setSexo(user.getSexo());
-            usr.setDni(user.getDni());
-            usr.setApellido(user.getApellido());
-            usr.setNombre(user.getNombre());
-            User savedPerfil = userRepository.save(usr);
-            return ResponseEntity.ok(this.findByDni(savedPerfil.getDni()));
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
-        }
+    public User findByDni(String dni) {
+        return ur.findByDni(dni);
     }
 }
