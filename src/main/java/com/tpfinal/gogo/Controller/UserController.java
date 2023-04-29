@@ -1,5 +1,12 @@
 package com.tpfinal.gogo.Controller;
 
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Email;
 import com.tpfinal.gogo.Exceptions.*;
 import com.tpfinal.gogo.Model.User;
 import com.tpfinal.gogo.Service.UserService;
@@ -8,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -24,6 +33,50 @@ public class UserController {
     }
 
     private record UserListResponse(List<User> users, String message) {
+    }
+
+    private static String generateVerificationCode() {
+        Random random = new Random();
+        int code = 100000 + random.nextInt(900000);
+        return Integer.toString(code);
+    }
+
+    public static boolean isValidEmailAddress(String email) {
+        String senderEmail = System.getenv("SENDER_EMAIL");
+        String verificationCode = generateVerificationCode();
+        try {
+            Email from = new Email(senderEmail);
+            Email to = new Email(email);
+            String subject = "Verificación";
+            Content content = new Content("text/html", "Verifique su dirección de correo electrónico: " + verificationCode);
+
+            Mail mail = new Mail(from, subject, to, content);
+
+            mail.setTemplateId("d-24471fdde8f84f92ab5033a5c55009d9");
+
+            SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
+            Request request = new Request();
+
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+
+            Response response = sg.api(request);
+
+            System.out.println(response.getStatusCode());
+            System.out.println(response.getHeaders());
+            System.out.println(response.getBody());
+            int statusCode = response.getStatusCode();
+            if (statusCode >= 200 && statusCode < 300) {
+                return true;
+            } else {
+                System.out.println(response.getBody());
+                return false;
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     private List<String> validateUser(User u) {
@@ -46,10 +99,11 @@ public class UserController {
         if (u.getEmail() == null || u.getEmail().isEmpty()) {
             errors.add("El email es requerido");
         }
-        if (u.getEmail() != null) {
-            if (!u.getEmail().endsWith("@uade.edu.ar")) {
-                errors.add("El email debe ser del dominio @uade.edu.ar");
-            }
+        if (u.getEmail() == null || !u.getEmail().matches(".+@uade\\.edu\\.ar")) {
+            errors.add("El email debe ser del dominio @uade.edu.ar y tener una parte local no vacía");
+        }
+        if (!isValidEmailAddress(u.getEmail())) {
+            errors.add("El email no es válido");
         }
         if (u.getClave() == null || u.getClave().isEmpty()) {
             errors.add("La clave es requerida");
