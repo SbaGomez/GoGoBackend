@@ -35,7 +35,7 @@ public class UserController {
             errors.add("El apellido es requerido");
         }
         if (u.getDni() == null || u.getDni().isEmpty()) {
-            errors.add("El dni del libro es requerido");
+            errors.add("El dni es requerido");
         }
         if (u.getSexo() == null || u.getSexo().isEmpty()) {
             errors.add("El sexo es requerido");
