@@ -46,6 +46,11 @@ public class UserController {
         if (u.getEmail() == null || u.getEmail().isEmpty()) {
             errors.add("El email es requerido");
         }
+        if (u.getEmail() != null) {
+            if (!u.getEmail().endsWith("@uade.edu.ar")) {
+                errors.add("El email debe ser del dominio @uade.edu.ar");
+            }
+        }
         if (u.getClave() == null || u.getClave().isEmpty()) {
             errors.add("La clave es requerida");
         }
