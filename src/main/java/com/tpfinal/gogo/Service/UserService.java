@@ -4,16 +4,12 @@ import com.tpfinal.gogo.Exceptions.*;
 import com.tpfinal.gogo.Model.User;
 import com.tpfinal.gogo.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
 public class UserService {
@@ -36,7 +32,7 @@ public class UserService {
         try {
             return ur.findAll().size();
         } catch (Exception e) {
-            throw new InternalServerException("Hubo un error al recuperar el total de libros");
+            throw new InternalServerException("Hubo un error al recuperar el total de usuarios");
         }
     }
 
