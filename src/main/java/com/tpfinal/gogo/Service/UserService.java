@@ -84,4 +84,8 @@ public class UserService {
     public User findByDni(String dni) {
         return ur.findByDni(dni);
     }
+
+    public User findByEmail(String email) {
+        return ur.findByEmail(email);
+    }
 }
