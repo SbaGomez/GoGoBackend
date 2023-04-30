@@ -1,0 +1,8 @@
+#Setear email SendGrid autorizado (reemplazar "emailApi@test.com")
+set SENDER_EMAIL=emailApi@test.com
+
+#Setear apiKey (reemplazar "apiKey")
+set SENDGRID_API_KEY=apiKey
+
+#Verificar que se hayan cargado las variables de entorno
+set S
