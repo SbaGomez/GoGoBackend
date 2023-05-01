@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -39,23 +40,25 @@ public class UserController {
     }
 
     @PostMapping("/addUser")
-    public ResponseEntity<Object> addUser(@RequestBody final @NotNull User u) {
-        List<String> errors = validateUser(u);
-        try {
-            if (!errors.isEmpty()) {
-                String errorMessage = String.join("\n", errors);
-                throw new BadRequestException(errorMessage);
+    public CompletableFuture<ResponseEntity<Object>> addUser(@RequestBody final @NotNull User u) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<String> errors = validateUser(u);
+            try {
+                if (!errors.isEmpty()) {
+                    String errorMessage = String.join("\n", errors);
+                    throw new BadRequestException(errorMessage);
+                }
+                String hashedPassword = BCrypt.hashpw(u.getClave(), BCrypt.gensalt());
+                u.setClave(hashedPassword);
+                return ResponseEntity.status(OK).body(new UserResponse(us.addUser(u), "Usuario cargado con éxito"));
+            } catch (BadRequestException e) {
+                return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.status(BAD_REQUEST).body("Hubo un error al cargar el usuario");
+            } catch (Exception e) {
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
             }
-            String hashedPassword = BCrypt.hashpw(u.getClave(), BCrypt.gensalt());
-            u.setClave(hashedPassword);
-            return ResponseEntity.status(OK).body(new UserResponse(us.addUser(u), "Usuario cargado con éxito"));
-        } catch (BadRequestException e) {
-            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(BAD_REQUEST).body("Hubo un error al cargar el usuario");
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
-        }
+        });
     }
 
     @PostMapping("/emailExists")
