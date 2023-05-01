@@ -47,27 +47,6 @@ public class AuthController {
         });
     }
 
-/*    @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody Map<String, String> request) {
-        try {
-            String email = request.get("email");
-            String password = request.get("clave");
-            User user = us.findByEmail(email);
-            if (user == null) {
-                return ResponseEntity.status(UNAUTHORIZED).body("Email o contraseña incorrectos");
-            }
-            if (!isValidPassword(password, user.getClave())) {
-                return ResponseEntity.status(UNAUTHORIZED).body("Email o contraseña incorrectos");
-            }
-            // If the login is valid, you can create a JWT token and return it in the response
-            String token = createJwtToken(user);
-            return ResponseEntity.status(OK).body(token);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
-        }
-    }*/
-
     private boolean isValidPassword(String password, String hashedPassword) {
         return BCrypt.checkpw(password, hashedPassword);
     }
