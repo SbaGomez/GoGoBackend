@@ -40,6 +40,7 @@ public class UserController {
     private record UserListResponse(List<User> users, String message) {
     }
 
+    @Async
     @PostMapping("/addUser")
     public CompletableFuture<ResponseEntity<Object>> addUser(@RequestBody final @NotNull User u) {
         return CompletableFuture.supplyAsync(() -> {
@@ -68,24 +69,28 @@ public class UserController {
 
     @Async
     @PostMapping("/emailExists")
-    public boolean emailExists(@RequestBody Map<String, String> request) {
+    public CompletableFuture<Boolean> emailExists(@RequestBody Map<String, String> request) {
+        return CompletableFuture.supplyAsync(() -> {
         String email = request.get("email");
         User user = us.findByEmail(email);
         if (user != null) {
             return user.getEmail().equals(email);
         }
         return false;
+        });
     }
 
     @Async
     @PostMapping("/dniExists")
-    public boolean dniExists(@RequestBody Map<String, String> request) {
+    public CompletableFuture<Boolean> dniExists(@RequestBody Map<String, String> request) {
+        return CompletableFuture.supplyAsync(() -> {
         String dni = request.get("dni");
         User user = us.findByDni(dni);
         if (user != null) {
             return user.getDni().equals(dni);
         }
         return false;
+        });
     }
 
     @GetMapping("")
