@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -65,6 +66,7 @@ public class UserController {
         });
     }
 
+    @Async
     @PostMapping("/emailExists")
     public boolean emailExists(@RequestBody Map<String, String> request) {
         String email = request.get("email");
@@ -75,6 +77,7 @@ public class UserController {
         return false;
     }
 
+    @Async
     @PostMapping("/dniExists")
     public boolean dniExists(@RequestBody Map<String, String> request) {
         String dni = request.get("dni");
