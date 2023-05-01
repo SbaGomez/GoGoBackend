@@ -70,7 +70,7 @@ public class UserController {
 
     @GetMapping("/dniExists")
     public boolean dniExists(@RequestBody Map<String, String> request) {
-        String dni = request.get("email");
+        String dni = request.get("dni");
         User user = us.findByDni(dni);
         if (user != null) {
             return user.getDni().equals(dni);
