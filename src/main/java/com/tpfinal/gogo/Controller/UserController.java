@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static org.springframework.http.HttpStatus.*;
@@ -58,15 +59,23 @@ public class UserController {
     }
 
     @GetMapping("/emailExists")
-    public boolean emailExists(@RequestParam String email) {
+    public boolean emailExists(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
         User user = us.findByEmail(email);
-        return user.getEmail().equals(email);
+        if (user != null) {
+            return user.getEmail().equals(email);
+        }
+        return false;
     }
 
     @GetMapping("/dniExists")
-    public boolean dniExists(@RequestParam String dni) {
+    public boolean dniExists(@RequestBody Map<String, String> request) {
+        String dni = request.get("email");
         User user = us.findByDni(dni);
-        return user.getDni().equals(dni);
+        if (user != null) {
+            return user.getDni().equals(dni);
+        }
+        return false;
     }
 
     @GetMapping("")
