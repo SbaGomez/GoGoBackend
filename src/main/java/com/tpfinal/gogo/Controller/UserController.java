@@ -14,6 +14,8 @@ import com.tpfinal.gogo.Service.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -145,7 +147,7 @@ public class UserController {
         return Integer.toString(code);
     }
 
-    public static boolean isValidEmailAddress(String email) {
+    public static Object isValidEmailAddress(String email) {
         String senderEmail = System.getenv("SENDER_EMAIL");
         String verificationCode = generateVerificationCode();
         try {
@@ -178,14 +180,14 @@ public class UserController {
             System.out.println(response.getBody());
             int statusCode = response.getStatusCode();
             if (statusCode >= 200 && statusCode < 300) {
-                return true;
+                return ResponseEntity.status(OK).body(verificationCode);
             } else {
                 System.out.println(response.getBody());
-                return false;
+                return ResponseEntity.status(NOT_FOUND).body("Hubo un error al enviar el mail de verificación");
             }
         } catch (IOException ex) {
             ex.printStackTrace();
-            return false;
+            return ResponseEntity.status(NOT_FOUND).body("Hubo un error al enviar el mail de verificación");
         }
     }
 
@@ -212,7 +214,7 @@ public class UserController {
         if (u.getEmail() == null || !u.getEmail().matches(".+@uade\\.edu\\.ar")) {
             errors.add("El email debe ser del dominio @uade.edu.ar y tener una parte local no vacía");
         }
-        if (!isValidEmailAddress(u.getEmail())) {
+        if (isValidEmailAddress(u.getEmail()).equals(ResponseEntity.status(OK))) {
             errors.add("El email no es válido");
         }
         if (u.getClave() == null || u.getClave().isEmpty()) {
