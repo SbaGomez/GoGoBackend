@@ -57,6 +57,18 @@ public class UserController {
         }
     }
 
+    @GetMapping("/emailExists")
+    public boolean emailExists(@RequestParam String email) {
+        User user = us.findByEmail(email);
+        return user.getEmail().equals(email);
+    }
+
+    @GetMapping("/dniExists")
+    public boolean dniExists(@RequestParam String dni) {
+        User user = us.findByDni(dni);
+        return user.getDni().equals(dni);
+    }
+
     @GetMapping("")
     public ResponseEntity<UserListResponse> getAll() {
         try {
