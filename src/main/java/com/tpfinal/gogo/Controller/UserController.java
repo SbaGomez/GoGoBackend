@@ -58,7 +58,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/emailExists")
+    @PostMapping("/emailExists")
     public boolean emailExists(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         User user = us.findByEmail(email);
@@ -68,7 +68,7 @@ public class UserController {
         return false;
     }
 
-    @GetMapping("/dniExists")
+    @PostMapping("/dniExists")
     public boolean dniExists(@RequestBody Map<String, String> request) {
         String dni = request.get("dni");
         User user = us.findByDni(dni);
