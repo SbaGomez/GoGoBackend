@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
+import static com.tpfinal.gogo.tools.VerificationCode.generateVerificationCode;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -34,7 +34,7 @@ public class UserController {
     @Autowired
     private UserService us;
 
-    private record UserResponse(User user, String message) {
+    public record UserResponse(User user, String message) {
     }
 
     private record UserListResponse(List<User> users, String message) {
@@ -149,12 +149,6 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el usuario");
         }
-    }
-
-    private static String generateVerificationCode() {
-        Random random = new Random();
-        int code = 100000 + random.nextInt(900000);
-        return Integer.toString(code);
     }
 
     public static String isValidEmailAddress(String email) {
