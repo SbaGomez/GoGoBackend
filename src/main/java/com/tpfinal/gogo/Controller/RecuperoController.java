@@ -49,7 +49,7 @@ public class RecuperoController {
                 }
                 code = verificationCode;
                 emailLocal = email;
-                return ResponseEntity.status(OK).body(new UserController.UserResponse(null, verificationCode));
+                return ResponseEntity.status(OK).body(verificationCode);
             } catch (Exception e) {
                 return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
             }
