@@ -1,4 +1,4 @@
-package com.tpfinal.gogo.Controller;
+package com.tpfinal.gogo.tools;
 
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
