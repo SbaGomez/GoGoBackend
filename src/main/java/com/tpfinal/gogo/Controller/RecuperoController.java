@@ -41,6 +41,10 @@ public class RecuperoController {
             try {
                 String email = request.get("email");
                 String verificationCode = isValidEmailRecupero(email);
+                User user = us.findByEmail(email);
+                if (user == null) {
+                    return ResponseEntity.status(NOT_FOUND).body("Email no registrado");
+                }
                 if (email == null || !email.matches(".+@uade\\.edu\\.ar")) {
                     throw new BadRequestException("El email debe ser del dominio @uade.edu.ar y tener una parte local no vacía");
                 }
@@ -49,7 +53,7 @@ public class RecuperoController {
                 }
                 code = verificationCode;
                 emailLocal = email;
-                return ResponseEntity.status(OK).body(verificationCode);
+                return ResponseEntity.status(OK).body("Email enviado");
             } catch (Exception e) {
                 return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
             }
