@@ -9,6 +9,7 @@ import io.jsonwebtoken.security.Keys;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -24,6 +25,7 @@ public class AuthController {
     @Autowired
     private UserService us;
 
+    @Async
     @PostMapping("/login")
     public CompletableFuture<ResponseEntity<Object>> login(@RequestBody Map<String, String> request) {
         return CompletableFuture.supplyAsync(() -> {
