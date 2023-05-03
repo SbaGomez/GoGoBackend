@@ -20,8 +20,8 @@ public class UserService {
         this.ur = userRepository;
     }
 
-    public User addUser(User user) {
-        return ur.save(user);
+    public void addUser(User user) {
+        ur.save(user);
     }
 
     public List<User> getAll() {
