@@ -89,8 +89,9 @@ public class UserController {
                     verificationCodeQueue.put(codigo);
                     return ResponseEntity.status(OK).body("Codigo recibido");
                     }
+                    return ResponseEntity.status(BAD_REQUEST).body("Código inválido");
                 }
-                return ResponseEntity.status(BAD_REQUEST).body("Código inválido");
+                return ResponseEntity.status(NOT_FOUND).body("Código no encontrado");
             } catch (IllegalArgumentException e) {
                 return ResponseEntity.status(BAD_REQUEST).body("Hubo un error al validar el codigo");
             } catch (Exception e) {
