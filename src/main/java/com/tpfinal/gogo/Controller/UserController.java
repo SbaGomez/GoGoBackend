@@ -90,7 +90,7 @@ public class UserController {
                     return ResponseEntity.status(OK).body("Codigo recibido");
                     }
                 }
-                return ResponseEntity.status(NOT_FOUND).body("Codigo invalido");
+                return ResponseEntity.status(BAD_REQUEST).body("Código inválido");
             } catch (IllegalArgumentException e) {
                 return ResponseEntity.status(BAD_REQUEST).body("Hubo un error al validar el codigo");
             } catch (Exception e) {
