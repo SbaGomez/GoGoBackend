@@ -51,6 +51,7 @@ public class UserController {
                     String errorMessage = String.join("\n", errors);
                     throw new BadRequestException(errorMessage);
                 }
+
                 if (verificationCode == null) {
                     return ResponseEntity.status(NOT_FOUND).body("El email no se pudo validar");
                 }
