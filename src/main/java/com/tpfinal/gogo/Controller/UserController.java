@@ -86,8 +86,8 @@ public class UserController {
             try {
                 if (codigo != null) {
                     if (codigo.equals(codigoLocal)) {
-                    verificationCodeQueue.put(codigo);
-                    return ResponseEntity.status(OK).body("Codigo recibido");
+                        verificationCodeQueue.put(codigo);
+                        return ResponseEntity.status(OK).body("Codigo recibido");
                     }
                     return ResponseEntity.status(BAD_REQUEST).body("Código inválido");
                 }
