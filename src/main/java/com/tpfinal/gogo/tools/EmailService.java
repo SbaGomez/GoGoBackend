@@ -14,6 +14,7 @@ import java.io.IOException;
 import static com.tpfinal.gogo.tools.VerificationCode.generateVerificationCode;
 
 public class EmailService {
+
     public static String isValidEmailAddress(String email, int tipoEmail) {
         String senderEmail = System.getenv("SENDER_EMAIL");
         String verificationCode = generateVerificationCode();
@@ -48,7 +49,7 @@ public class EmailService {
                 personalization.addTo(to);
                 personalization.addDynamicTemplateData("code", verificationCode);
                 mail.addPersonalization(personalization);
-                mail.setTemplateId("567845678");
+                mail.setTemplateId("d-24471fdde8f84f92ab5033a5c55009d9");
                 mail.getPersonalization().get(0).addDynamicTemplateData("code", verificationCode);
             }
             SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
