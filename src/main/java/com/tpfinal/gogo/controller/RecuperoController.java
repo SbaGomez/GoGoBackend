@@ -1,28 +1,19 @@
-package com.tpfinal.gogo.Controller;
+package com.tpfinal.gogo.controller;
 
-import com.sendgrid.Method;
-import com.sendgrid.Request;
-import com.sendgrid.Response;
-import com.sendgrid.SendGrid;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Content;
-import com.sendgrid.helpers.mail.objects.Email;
-import com.sendgrid.helpers.mail.objects.Personalization;
-import com.tpfinal.gogo.Exceptions.BadRequestException;
-import com.tpfinal.gogo.Model.User;
-import com.tpfinal.gogo.Service.UserService;
+import com.tpfinal.gogo.exceptions.BadRequestException;
+import com.tpfinal.gogo.model.User;
+import com.tpfinal.gogo.service.UserService;
 
+import com.tpfinal.gogo.tools.EmailService;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import static com.tpfinal.gogo.tools.VerificationCode.generateVerificationCode;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -40,7 +31,7 @@ public class RecuperoController {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 String email = request.get("email");
-                String verificationCode = isValidEmailRecupero(email);
+                int tipoEmail = Integer.parseInt(request.get("tipoEmail"));
                 User user = us.findByEmail(email);
                 if (user == null) {
                     return ResponseEntity.status(NOT_FOUND).body("Email no registrado");
@@ -48,6 +39,7 @@ public class RecuperoController {
                 if (email == null || !email.matches(".+@uade\\.edu\\.ar")) {
                     throw new BadRequestException("El email debe ser del dominio @uade.edu.ar y tener una parte local no vacía");
                 }
+                String verificationCode = EmailService.isValidEmailAddress(email, tipoEmail);
                 if (verificationCode == null) {
                     return ResponseEntity.status(NOT_FOUND).body("El email no se pudo validar");
                 }
@@ -81,49 +73,5 @@ public class RecuperoController {
             }
         });
     }
-
-
-    private String isValidEmailRecupero(String email) {
-        String senderEmail = System.getenv("SENDER_EMAIL");
-        String verificationCode = generateVerificationCode();
-        try {
-            Email from = new Email(senderEmail);
-            Email to = new Email(email);
-            String subject = "Recupero contraseña";
-            Content content = new Content("text/html", "Recupere su contraseña ingresando el siguiente código en la app: " + verificationCode);
-
-            Mail mail = new Mail(from, subject, to, content);
-
-            Personalization personalization = new Personalization();
-            personalization.addTo(to);
-            personalization.addDynamicTemplateData("code", verificationCode);
-            mail.addPersonalization(personalization);
-            mail.setTemplateId("d-24471fdde8f84f92ab5033a5c55009d9");
-            mail.getPersonalization().get(0).addDynamicTemplateData("code", verificationCode);
-
-
-            SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
-            Request request = new Request();
-
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody(mail.build());
-
-            Response response = sg.api(request);
-
-            System.out.println(response.getStatusCode());
-            System.out.println(response.getHeaders());
-            System.out.println(response.getBody());
-            int statusCode = response.getStatusCode();
-            if (statusCode >= 200 && statusCode < 300) {
-                return verificationCode;
-            } else {
-                System.out.println(response.getBody());
-                return null;
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
 }
+

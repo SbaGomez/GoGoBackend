@@ -1,6 +1,6 @@
-package com.tpfinal.gogo.Repository;
+package com.tpfinal.gogo.repository;
 
-import com.tpfinal.gogo.Model.User;
+import com.tpfinal.gogo.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,8 +1,8 @@
-package com.tpfinal.gogo.Service;
+package com.tpfinal.gogo.service;
 
-import com.tpfinal.gogo.Exceptions.*;
-import com.tpfinal.gogo.Model.User;
-import com.tpfinal.gogo.Repository.UserRepository;
+import com.tpfinal.gogo.exceptions.*;
+import com.tpfinal.gogo.model.User;
+import com.tpfinal.gogo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

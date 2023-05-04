@@ -1,7 +1,7 @@
-package com.tpfinal.gogo.Controller;
+package com.tpfinal.gogo.controller;
 
-import com.tpfinal.gogo.Model.User;
-import com.tpfinal.gogo.Service.UserService;
+import com.tpfinal.gogo.model.User;
+import com.tpfinal.gogo.service.UserService;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

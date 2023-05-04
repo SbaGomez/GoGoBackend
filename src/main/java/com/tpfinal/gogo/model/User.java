@@ -1,4 +1,4 @@
-package com.tpfinal.gogo.Model;
+package com.tpfinal.gogo.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

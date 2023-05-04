@@ -1,4 +1,4 @@
-package com.tpfinal.gogo.Exceptions;
+package com.tpfinal.gogo.exceptions;
 
 public class BadRequestException extends RuntimeException {
     public BadRequestException(String message) {

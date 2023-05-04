@@ -1,16 +1,8 @@
-package com.tpfinal.gogo.Controller;
+package com.tpfinal.gogo.controller;
 
-import com.sendgrid.Method;
-import com.sendgrid.Request;
-import com.sendgrid.Response;
-import com.sendgrid.SendGrid;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Content;
-import com.sendgrid.helpers.mail.objects.Email;
-import com.sendgrid.helpers.mail.objects.Personalization;
-import com.tpfinal.gogo.Exceptions.*;
-import com.tpfinal.gogo.Model.User;
-import com.tpfinal.gogo.Service.UserService;
+import com.tpfinal.gogo.exceptions.*;
+import com.tpfinal.gogo.model.User;
+import com.tpfinal.gogo.service.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +17,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static com.tpfinal.gogo.tools.VerificationCode.generateVerificationCode;
+import static com.tpfinal.gogo.tools.EmailService.isValidEmailAddress;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -35,7 +26,7 @@ import static org.springframework.http.HttpStatus.*;
 public class UserController {
     @Autowired
     private UserService us;
-    private BlockingQueue<String> verificationCodeQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<String> verificationCodeQueue = new LinkedBlockingQueue<>();
     String codigoLocal;
 
 
@@ -47,9 +38,18 @@ public class UserController {
 
     @Async
     @PostMapping("/addUser")
-    public CompletableFuture<ResponseEntity<Object>> addUser(@RequestBody final @NotNull User u) {
+    public CompletableFuture<ResponseEntity<Object>> addUser(@RequestBody Map<String, String> request) {
         return CompletableFuture.supplyAsync(() -> {
-            String verificationCode = isValidEmailAddress(u.getEmail());
+            User u = new User();
+            int tipoEmail = Integer.parseInt(request.get("tipoEmail"));
+            u.setNombre(request.get("nombre"));
+            u.setApellido(request.get("apellido"));
+            u.setDni(request.get("dni"));
+            u.setSexo(request.get("sexo"));
+            u.setEdad(Integer.parseInt(request.get("edad")));
+            u.setEmail(request.get("email"));
+            u.setClave(request.get("clave"));
+            String verificationCode = isValidEmailAddress(u.getEmail(), tipoEmail);
             List<String> errors = validateUser(u);
             try {
                 if (!errors.isEmpty()) {
@@ -181,50 +181,6 @@ public class UserController {
             return ResponseEntity.status(OK).body(user);
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el usuario");
-        }
-    }
-
-    public static String isValidEmailAddress(String email) {
-        String senderEmail = System.getenv("SENDER_EMAIL");
-        String verificationCode = generateVerificationCode();
-        try {
-            Email from = new Email(senderEmail);
-            Email to = new Email(email);
-            String subject = "Verificación";
-            Content content = new Content("text/html", "Verifique su dirección de correo electrónico: " + verificationCode);
-
-            Mail mail = new Mail(from, subject, to, content);
-
-            Personalization personalization = new Personalization();
-            personalization.addTo(to);
-            personalization.addDynamicTemplateData("code", verificationCode);
-            mail.addPersonalization(personalization);
-            mail.setTemplateId("d-24471fdde8f84f92ab5033a5c55009d9");
-            mail.getPersonalization().get(0).addDynamicTemplateData("code", verificationCode);
-
-
-            SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
-            Request request = new Request();
-
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody(mail.build());
-
-            Response response = sg.api(request);
-
-            System.out.println(response.getStatusCode());
-            System.out.println(response.getHeaders());
-            System.out.println(response.getBody());
-            int statusCode = response.getStatusCode();
-            if (statusCode >= 200 && statusCode < 300) {
-                return verificationCode;
-            } else {
-                System.out.println(response.getBody());
-                return null;
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
         }
     }
 
