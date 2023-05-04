@@ -3,6 +3,7 @@ package com.tpfinal.gogo.controller;
 import com.tpfinal.gogo.exceptions.*;
 import com.tpfinal.gogo.model.User;
 import com.tpfinal.gogo.service.UserService;
+import com.tpfinal.gogo.tools.ValidateUserService;
 import org.jetbrains.annotations.NotNull;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -49,20 +49,24 @@ public class UserController {
             u.setEdad(Integer.parseInt(request.get("edad")));
             u.setEmail(request.get("email"));
             u.setClave(request.get("clave"));
-            String verificationCode = isValidEmailAddress(u.getEmail(), tipoEmail);
-            List<String> errors = validateUser(u);
+            List<String> errors = ValidateUserService.validateUser(u);
             try {
                 if (!errors.isEmpty()) {
                     String errorMessage = String.join("\n", errors);
                     throw new BadRequestException(errorMessage);
                 }
+
+                String verificationCode = isValidEmailAddress(u.getEmail(), tipoEmail);
+
                 if (verificationCode == null) {
                     return ResponseEntity.status(NOT_FOUND).body("El email no se pudo validar");
                 }
+
                 codigoLocal = verificationCode;
                 String enteredCode = verificationCodeQueue.take();
                 String hashedPassword = BCrypt.hashpw(u.getClave(), BCrypt.gensalt());
                 u.setClave(hashedPassword);
+
                 if (enteredCode.equals(verificationCode)) {
                     us.addUser(u);
                     return ResponseEntity.status(OK).body("Usuario registrado");
@@ -182,34 +186,5 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el usuario");
         }
-    }
-
-    private List<String> validateUser(User u) {
-        List<String> errors = new ArrayList<>();
-        if (u.getNombre() == null || u.getNombre().isEmpty()) {
-            errors.add("El nombre es requerido");
-        }
-        if (u.getApellido() == null || u.getApellido().isEmpty()) {
-            errors.add("El apellido es requerido");
-        }
-        if (u.getDni() == null || u.getDni().isEmpty()) {
-            errors.add("El dni es requerido");
-        }
-        if (u.getSexo() == null || u.getSexo().isEmpty()) {
-            errors.add("El sexo es requerido");
-        }
-        if (u.getEdad() == 0) {
-            errors.add("La edad es requerida");
-        }
-        if (u.getEmail() == null || u.getEmail().isEmpty()) {
-            errors.add("El email es requerido");
-        }
-        if (u.getEmail() == null || !u.getEmail().matches(".+@uade\\.edu\\.ar")) {
-            errors.add("El email debe ser del dominio @uade.edu.ar y tener una parte local no vacía");
-        }
-        if (u.getClave() == null || u.getClave().isEmpty()) {
-            errors.add("La clave es requerida");
-        }
-        return errors;
     }
 }
