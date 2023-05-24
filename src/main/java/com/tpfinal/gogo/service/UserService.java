@@ -1,15 +1,11 @@
 package com.tpfinal.gogo.service;
 
-import com.tpfinal.gogo.exceptions.*;
 import com.tpfinal.gogo.model.User;
 import com.tpfinal.gogo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-import static org.springframework.http.HttpStatus.*;
 
 @Service
 public class UserService {
@@ -29,11 +25,7 @@ public class UserService {
     }
 
     public Integer getTotal() {
-        try {
-            return ur.findAll().size();
-        } catch (Exception e) {
-            throw new InternalServerException("Hubo un error al recuperar el total de usuarios");
-        }
+        return ur.findAll().size();
     }
 
     public User updateUser(Integer id, User user) {
@@ -65,16 +57,12 @@ public class UserService {
         return u;
     }
 
-    public ResponseEntity<String> deleteUser(Integer id) {
-        if (ur.existsById(id)) {
-            try {
-                ur.deleteById(id);
-                return ResponseEntity.status(OK).body("Usuario " + id + " eliminado con éxito");
-            } catch (Exception e) {
-                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
-            }
-        }
-        return ResponseEntity.status(NOT_FOUND).body("Usuario " + id + " no encontrado");
+    public boolean existsById(Integer id) {
+        return ur.existsById(id);
+    }
+
+    public void deleteUser(Integer id) {
+        ur.deleteById(id);
     }
 
     public User getUser(Integer id) {
