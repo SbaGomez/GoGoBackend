@@ -1,11 +1,12 @@
 package com.tpfinal.gogo.tools;
 
+import com.tpfinal.gogo.model.Auto;
 import com.tpfinal.gogo.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ValidateUserService {
+public class ValidateService {
 
     public static List<String> validateUser(User u) {
         List<String> errors = new ArrayList<>();
@@ -32,6 +33,23 @@ public class ValidateUserService {
         }
         if (u.getClave() == null || u.getClave().isEmpty()) {
             errors.add("La clave es requerida");
+        }
+        return errors;
+    }
+
+    public static List<String> validateAuto(Auto a) {
+        List<String> errors = new ArrayList<>();
+        if (a.getPatente() == null || a.getPatente().isEmpty()) {
+            errors.add("La patente es requerida");
+        }
+        if (a.getColor() == null || a.getColor().isEmpty()) {
+            errors.add("El color es requerido");
+        }
+        if (a.getModelo() == null || a.getModelo().isEmpty()) {
+            errors.add("El modelo es requerido");
+        }
+        if (a.getMarca() == null || a.getMarca().isEmpty()) {
+            errors.add("La marca es requerida");
         }
         return errors;
     }
