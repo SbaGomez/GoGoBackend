@@ -1,0 +1,124 @@
+package com.tpfinal.gogo.controller;
+
+import com.tpfinal.gogo.exceptions.BadRequestException;
+import com.tpfinal.gogo.model.Auto;
+import com.tpfinal.gogo.service.AutoService;
+import com.tpfinal.gogo.tools.ValidateService;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
+import static org.springframework.http.HttpStatus.*;
+
+@RestController
+@RequestMapping("auto")
+@CrossOrigin("http://localhost:19006")
+public class AutoController {
+    @Autowired
+    private AutoService as;
+
+    private record AutoListResponse(List<Auto> autos, String message) {
+    }
+
+    private record AutoResponse(Auto auto, String message) {
+    }
+
+    @Async
+    @PostMapping("/addAuto")
+    public CompletableFuture<ResponseEntity<Object>> addAuto(@RequestBody Map<String, String> request) {
+        return CompletableFuture.supplyAsync(() -> {
+            Auto a = new Auto();
+            a.setPatente(request.get("patente"));
+            a.setColor(request.get("color"));
+            a.setModelo(request.get("modelo"));
+            a.setMarca(request.get("marca"));
+            List<String> errors = ValidateService.validateAuto(a);
+            try {
+                if (!errors.isEmpty()) {
+                    String errorMessage = String.join("\n", errors);
+                    throw new BadRequestException(errorMessage);
+                }
+            as.addAuto(a);
+            return ResponseEntity.status(OK).body("Auto registrado");
+            } catch (BadRequestException e) {
+                return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.status(BAD_REQUEST).body("Hubo un error al cargar el auto");
+            } catch (Exception e) {
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
+            }
+        });
+    }
+
+    @GetMapping("")
+    public ResponseEntity<AutoController.AutoListResponse> getAll() {
+        try {
+            return ResponseEntity.status(OK).body(new AutoController.AutoListResponse(as.getAll(), "Autos recuperados con éxito"));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new AutoController.AutoListResponse(null, "Hubo un error al recuperar los autos"));
+        }
+    }
+
+    @GetMapping("/total")
+    public Integer getTotal() {
+        return as.getTotal();
+    }
+
+    @PostMapping("/{id}/update")
+    public ResponseEntity<Object> updateAuto(@PathVariable final @NotNull Integer id, @RequestBody final @NotNull Auto a) {
+        try {
+            Auto updatedAuto = as.updateAuto(id, a);
+            if (updatedAuto == null) {
+                return ResponseEntity.status(NOT_FOUND).body("Auto " + id + " no encontrado");
+            }
+            return ResponseEntity.status(OK).body(new AutoController.AutoResponse(updatedAuto, "Auto " + id + " actualizado con éxito"));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
+    }
+
+    @PostMapping("/{id}/delete")
+    public ResponseEntity<String> deleteAuto(@PathVariable final @NotNull Integer id) {
+        try {
+            if (as.existsById(id)) {
+                as.deleteAuto(id);
+                return ResponseEntity.status(OK).body("Auto " + id + " eliminado con éxito");
+            }
+            return ResponseEntity.status(NOT_FOUND).body("Auto " + id + " no encontrado");
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getAuto(@PathVariable final @NotNull Integer id) {
+        try {
+            Auto auto = as.getAuto(id);
+            if (auto == null) {
+                return ResponseEntity.status(NOT_FOUND).body("Auto " + id + " no encontrado");
+            }
+            return ResponseEntity.status(OK).body(new AutoController.AutoResponse(auto, "Auto " + id + " recuperado con éxito"));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el auto");
+        }
+    }
+
+    @GetMapping("/patente/{patente}")
+    public ResponseEntity<Object> getAutoByPatente(@PathVariable String patente) {
+        try {
+            Auto auto = as.findByPatente(patente);
+            if (auto == null) {
+                return ResponseEntity.status(NOT_FOUND).body("Auto con patente (" + patente + ") no encontrado");
+            }
+            return ResponseEntity.status(OK).body(new AutoController.AutoResponse(auto, "Auto (" + patente + ") recuperado con éxito"));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el auto");
+        }
+    }
+}
