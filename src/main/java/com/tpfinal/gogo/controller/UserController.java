@@ -3,7 +3,7 @@ package com.tpfinal.gogo.controller;
 import com.tpfinal.gogo.exceptions.*;
 import com.tpfinal.gogo.model.User;
 import com.tpfinal.gogo.service.UserService;
-import com.tpfinal.gogo.tools.ValidateUserService;
+import com.tpfinal.gogo.tools.ValidateService;
 import org.jetbrains.annotations.NotNull;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class UserController {
     String codigoLocal;
 
 
-    public record UserResponse(User user, String message) {
+    private record UserResponse(User user, String message) {
     }
 
     private record UserListResponse(List<User> users, String message) {
@@ -49,7 +49,7 @@ public class UserController {
             u.setEdad(Integer.parseInt(request.get("edad")));
             u.setEmail(request.get("email"));
             u.setClave(request.get("clave"));
-            List<String> errors = ValidateUserService.validateUser(u);
+            List<String> errors = ValidateService.validateUser(u);
             try {
                 if (!errors.isEmpty()) {
                     String errorMessage = String.join("\n", errors);
@@ -159,7 +159,15 @@ public class UserController {
 
     @PostMapping("/{id}/delete")
     public ResponseEntity<String> deleteUser(@PathVariable final @NotNull Integer id) {
-        return us.deleteUser(id);
+        try {
+            if (us.existsById(id)) {
+                us.deleteUser(id);
+                return ResponseEntity.status(OK).body("Usuario " + id + " eliminado con éxito");
+            }
+            return ResponseEntity.status(NOT_FOUND).body("Usuario " + id + " no encontrado");
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
     }
 
     @GetMapping("/{id}")
@@ -169,20 +177,20 @@ public class UserController {
             if (user == null) {
                 return ResponseEntity.status(NOT_FOUND).body("Usuario " + id + " no encontrado");
             }
-            return ResponseEntity.status(OK).body(new UserResponse(us.getUser(id), "Usuario " + id + " recuperado con éxito"));
+            return ResponseEntity.status(OK).body(new UserResponse(user, "Usuario " + id + " recuperado con éxito"));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el usuario");
         }
     }
 
     @GetMapping("/dni/{dni}")
-    public ResponseEntity<Object> getUserByDni(@PathVariable String dni) {
+    public ResponseEntity<Object> getUserByDni(@PathVariable final @NotNull String dni) {
         try {
             User user = us.findByDni(dni);
             if (user == null) {
-                return ResponseEntity.status(NOT_FOUND).body("Usuario con " + dni + " no encontrado");
+                return ResponseEntity.status(NOT_FOUND).body("Usuario con dni (" + dni + ") no encontrado");
             }
-            return ResponseEntity.status(OK).body(user);
+            return ResponseEntity.status(OK).body(new UserResponse(user, "Usuario con dni (" + dni + ") recuperado con éxito"));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el usuario");
         }
