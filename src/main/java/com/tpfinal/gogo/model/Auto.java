@@ -22,5 +22,7 @@ public class Auto {
     private String modelo;
     @Column(name = "marca", nullable = false)
     private String marca;
+    @OneToOne(mappedBy = "auto")
+    private User user;
 }
 
