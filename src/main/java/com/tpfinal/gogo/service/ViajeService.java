@@ -61,7 +61,7 @@ public class ViajeService {
     }
 
     public Viaje findByUbicacionInicio(String inicio) {
-        return vr.findByUbicacionInicio(inicio);
+        return vr.findByInicio(inicio);
     }
 
 //    public Viaje findByUbicacionInicio(Ubicacion inicio) {
@@ -69,6 +69,6 @@ public class ViajeService {
 //    }
 
     public Viaje findByUbicacionDestino(String destino) {
-        return vr.findByUbicacionDestino(destino);
+        return vr.findByDestino(destino);
     }
 }
