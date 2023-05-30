@@ -57,11 +57,11 @@ public class AutoController {
     }
 
     @GetMapping("")
-    public ResponseEntity<AutoController.AutoListResponse> getAll() {
+    public ResponseEntity<AutoListResponse> getAll() {
         try {
-            return ResponseEntity.status(OK).body(new AutoController.AutoListResponse(as.getAll(), "Autos recuperados con éxito"));
+            return ResponseEntity.status(OK).body(new AutoListResponse(as.getAll(), "Autos recuperados con éxito"));
         } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new AutoController.AutoListResponse(null, "Hubo un error al recuperar los autos"));
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new AutoListResponse(null, "Hubo un error al recuperar los autos"));
         }
     }
 
@@ -77,7 +77,7 @@ public class AutoController {
             if (updatedAuto == null) {
                 return ResponseEntity.status(NOT_FOUND).body("Auto " + id + " no encontrado");
             }
-            return ResponseEntity.status(OK).body(new AutoController.AutoResponse(updatedAuto, "Auto " + id + " actualizado con éxito"));
+            return ResponseEntity.status(OK).body(new AutoResponse(updatedAuto, "Auto " + id + " actualizado con éxito"));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
         }
@@ -103,7 +103,7 @@ public class AutoController {
             if (auto == null) {
                 return ResponseEntity.status(NOT_FOUND).body("Auto " + id + " no encontrado");
             }
-            return ResponseEntity.status(OK).body(new AutoController.AutoResponse(auto, "Auto " + id + " recuperado con éxito"));
+            return ResponseEntity.status(OK).body(new AutoResponse(auto, "Auto " + id + " recuperado con éxito"));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el auto");
         }
@@ -116,7 +116,7 @@ public class AutoController {
             if (auto == null) {
                 return ResponseEntity.status(NOT_FOUND).body("Auto con patente (" + patente + ") no encontrado");
             }
-            return ResponseEntity.status(OK).body(new AutoController.AutoResponse(auto, "Auto (" + patente + ") recuperado con éxito"));
+            return ResponseEntity.status(OK).body(new AutoResponse(auto, "Auto con patente (" + patente + ") recuperado con éxito"));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el auto");
         }
