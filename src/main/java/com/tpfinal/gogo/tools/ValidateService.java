@@ -2,6 +2,7 @@ package com.tpfinal.gogo.tools;
 
 import com.tpfinal.gogo.model.Auto;
 import com.tpfinal.gogo.model.User;
+import com.tpfinal.gogo.model.Viaje;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,23 @@ public class ValidateService {
         }
         if (a.getMarca() == null || a.getMarca().isEmpty()) {
             errors.add("La marca es requerida");
+        }
+        return errors;
+    }
+
+    public static List<String> validateViaje(Viaje v) {
+        List<String> errors = new ArrayList<>();
+        if (v.getHorarioSalida() == null) {
+            errors.add("El horario de salida es requerido");
+        }
+        if (v.getHorarioLlegada() == null) {
+            errors.add("El horario de llegada es requerido");
+        }
+        if (v.getInicio() == null) {
+            errors.add("El inicio es requerido");
+        }
+        if (v.getDestino() == null) {
+            errors.add("El destino es requerido");
         }
         return errors;
     }
