@@ -184,9 +184,8 @@ public class UserController {
     }
 
     @GetMapping("/dni/{dni}")
-    public ResponseEntity<Object> getUserByDni(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Object> getUserByDni(@PathVariable final @NotNull String dni) {
         try {
-            String dni = request.get("dni");
             User user = us.findByDni(dni);
             if (user == null) {
                 return ResponseEntity.status(NOT_FOUND).body("Usuario con dni (" + dni + ") no encontrado");
@@ -198,9 +197,8 @@ public class UserController {
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<Object> getUserByEmail(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Object> getUserByEmail(@@PathVariable final @NotNull String email) {
         try {
-            String email = request.get("email");
             User user = us.findByEmail(email);
             if (user == null) {
                 return ResponseEntity.status(NOT_FOUND).body("Usuario con email (" + email + ") no encontrado");
