@@ -184,13 +184,28 @@ public class UserController {
     }
 
     @GetMapping("/dni/{dni}")
-    public ResponseEntity<Object> getUserByDni(@PathVariable final @NotNull String dni) {
+    public ResponseEntity<Object> getUserByDni(@RequestBody Map<String, String> request) {
         try {
+            String dni = request.get("dni");
             User user = us.findByDni(dni);
             if (user == null) {
                 return ResponseEntity.status(NOT_FOUND).body("Usuario con dni (" + dni + ") no encontrado");
             }
             return ResponseEntity.status(OK).body(new UserResponse(user, "Usuario con dni (" + dni + ") recuperado con éxito"));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el usuario");
+        }
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Object> getUserByEmail(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            User user = us.findByEmail(email);
+            if (user == null) {
+                return ResponseEntity.status(NOT_FOUND).body("Usuario con email (" + email + ") no encontrado");
+            }
+            return ResponseEntity.status(OK).body(new UserResponse(user, "Usuario con email (" + email + ") recuperado con éxito"));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el usuario");
         }
