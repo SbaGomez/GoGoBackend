@@ -197,7 +197,7 @@ public class UserController {
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<Object> getUserByEmail(@@PathVariable final @NotNull String email) {
+    public ResponseEntity<Object> getUserByEmail(@PathVariable final @NotNull String email) {
         try {
             User user = us.findByEmail(email);
             if (user == null) {
