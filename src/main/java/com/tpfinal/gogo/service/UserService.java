@@ -31,16 +31,16 @@ public class UserService {
     public User updateUser(Integer id, User user) {
         User u = ur.findById(id).orElse(null);
         if (u != null) {
-            if ((user.getNombre()) != null) {
+            if (user.getNombre() != null) {
                 u.setNombre(user.getNombre());
             }
-            if ((user.getApellido()) != null) {
+            if (user.getApellido() != null) {
                 u.setApellido(user.getApellido());
             }
-            if ((user.getDni()) != null) {
+            if (user.getDni() != null) {
                 u.setDni(user.getDni());
             }
-            if ((user.getSexo()) != null) {
+            if (user.getSexo() != null) {
                 u.setSexo(user.getSexo());
             }
             if (user.getEdad() != 0) {
@@ -51,6 +51,9 @@ public class UserService {
             }
             if (user.getClave() != null) {
                 u.setClave(user.getClave());
+            }
+            if (user.getAuto() != null) {
+                u.setAuto(user.getAuto());
             }
             ur.save(u);
         }

@@ -2,7 +2,9 @@ package com.tpfinal.gogo.controller;
 
 import com.tpfinal.gogo.exceptions.BadRequestException;
 import com.tpfinal.gogo.model.Auto;
+import com.tpfinal.gogo.model.User;
 import com.tpfinal.gogo.service.AutoService;
+import com.tpfinal.gogo.service.UserService;
 import com.tpfinal.gogo.tools.ValidateService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ import static org.springframework.http.HttpStatus.*;
 public class AutoController {
     @Autowired
     private AutoService as;
+    @Autowired
+    private UserService us;
 
     private record AutoListResponse(List<Auto> autos, String message) {
     }
@@ -45,6 +49,12 @@ public class AutoController {
                     throw new BadRequestException(errorMessage);
                 }
             as.addAuto(a);
+
+            User user = new User();
+            int id = Integer.parseInt(request.get("id"));
+            user.setAuto(a);
+            us.updateUser(id, user);
+
             return ResponseEntity.status(OK).body("Auto registrado");
             } catch (BadRequestException e) {
                 return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
@@ -110,7 +120,7 @@ public class AutoController {
     }
 
     @GetMapping("/patente/{patente}")
-    public ResponseEntity<Object> getAutoByPatente(@PathVariable String patente) {
+    public ResponseEntity<Object> getAutoByPatente(@PathVariable final @NotNull String patente) {
         try {
             Auto auto = as.findByPatente(patente);
             if (auto == null) {
