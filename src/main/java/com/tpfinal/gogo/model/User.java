@@ -28,7 +28,7 @@ public class User {
     private String email;
     @Column(name = "clave", nullable = false)
     private String clave;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "auto_id")
     private Auto auto;
 }

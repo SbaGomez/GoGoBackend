@@ -24,7 +24,7 @@ public class Auto {
     @Column(name = "marca", nullable = false)
     private String marca;
     @JsonIgnore
-    @OneToOne(mappedBy = "auto", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "auto")
     private User user;
 }
 

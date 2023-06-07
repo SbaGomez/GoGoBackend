@@ -96,10 +96,12 @@ public class AutoController {
     @PostMapping("/{id}/delete")
     public ResponseEntity<String> deleteAuto(@PathVariable final @NotNull Integer id) {
         try {
-            if (as.existsById(id)) {
-                User user = new User();
+            Auto auto = as.getAuto(id);
+            if (auto != null) {
+                User user = auto.getUser();
                 user.setAuto(null);
                 us.updateUser(user.getId(), user);
+                as.deleteAuto(id);
                 return ResponseEntity.status(OK).body("Auto " + id + " eliminado con éxito");
             }
             return ResponseEntity.status(NOT_FOUND).body("Auto " + id + " no encontrado");
