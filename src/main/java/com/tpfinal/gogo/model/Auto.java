@@ -1,5 +1,6 @@
 package com.tpfinal.gogo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +23,8 @@ public class Auto {
     private String modelo;
     @Column(name = "marca", nullable = false)
     private String marca;
-    @OneToOne(mappedBy = "auto")
+    @JsonIgnore
+    @OneToOne(mappedBy = "auto", cascade = CascadeType.ALL)
     private User user;
 }
 

@@ -97,7 +97,9 @@ public class AutoController {
     public ResponseEntity<String> deleteAuto(@PathVariable final @NotNull Integer id) {
         try {
             if (as.existsById(id)) {
-                as.deleteAuto(id);
+                User user = new User();
+                user.setAuto(null);
+                us.updateUser(user.getId(), user);
                 return ResponseEntity.status(OK).body("Auto " + id + " eliminado con éxito");
             }
             return ResponseEntity.status(NOT_FOUND).body("Auto " + id + " no encontrado");
