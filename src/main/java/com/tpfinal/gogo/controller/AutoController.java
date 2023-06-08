@@ -55,7 +55,7 @@ public class AutoController {
             user.setAuto(a);
             us.updateUser(id, user);
 
-            return ResponseEntity.status(OK).body("Auto registrado");
+            return ResponseEntity.status(OK).body(a);
             } catch (BadRequestException e) {
                 return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
             } catch (IllegalArgumentException e) {
@@ -117,7 +117,7 @@ public class AutoController {
             if (auto == null) {
                 return ResponseEntity.status(NOT_FOUND).body("Auto " + id + " no encontrado");
             }
-            return ResponseEntity.status(OK).body(new AutoResponse(auto, "Auto " + id + " recuperado con éxito"));
+            return ResponseEntity.status(OK).body(auto);
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el auto");
         }
