@@ -1,8 +1,9 @@
 package com.tpfinal.gogo.controller;
 
 import com.tpfinal.gogo.exceptions.BadRequestException;
+import com.tpfinal.gogo.model.User;
 import com.tpfinal.gogo.model.Viaje;
-import com.tpfinal.gogo.model.Ubicacion;
+import com.tpfinal.gogo.service.UserService;
 import com.tpfinal.gogo.service.ViajeService;
 import com.tpfinal.gogo.tools.ValidateService;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -24,6 +26,8 @@ import static org.springframework.http.HttpStatus.*;
 public class ViajeController {
     @Autowired
     private ViajeService vs;
+    @Autowired
+    private UserService us;
 
     private record ViajeListResponse(List<Viaje> viajes, String message) {
     }
@@ -36,16 +40,17 @@ public class ViajeController {
     public CompletableFuture<ResponseEntity<Object>> addViaje(@RequestBody Map<String, String> request) {
         return CompletableFuture.supplyAsync(() -> {
             Viaje v = new Viaje();
-            v.setHorarioSalida(LocalDate.parse(request.get("horarioSalida")));
-            v.setHorarioLlegada(LocalDate.parse(request.get("horarioLlegada")));
+            List<Viaje> viajeList = new ArrayList<Viaje>();
+            v.setHorarioSalida(LocalDateTime.parse(request.get("horarioSalida")));
+            v.setHorarioLlegada(LocalDateTime.parse(request.get("horarioLlegada")));
 
-            Ubicacion inicio = new Ubicacion();
+/*            Ubicacion inicio = new Ubicacion();
             inicio.setNombre(request.get("inicio"));
             v.setInicio(inicio);
 
             Ubicacion destino = new Ubicacion();
             destino.setNombre(request.get("destino"));
-            v.setDestino(destino);
+            v.setDestino(destino);*/
 
             List<String> errors = ValidateService.validateViaje(v);
             try {
@@ -54,7 +59,14 @@ public class ViajeController {
                     throw new BadRequestException(errorMessage);
                 }
                 vs.addViaje(v);
-                return ResponseEntity.status(OK).body("Viaje registrado");
+                viajeList.add(v);
+
+                User user = new User();
+                int id = Integer.parseInt(request.get("id"));
+                user.setViajes(viajeList);
+                us.updateUser(id, user);
+
+                return ResponseEntity.status(OK).body(v);
             } catch (BadRequestException e) {
                 return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
             } catch (IllegalArgumentException e) {
@@ -118,8 +130,8 @@ public class ViajeController {
         }
     }
 
-    @GetMapping("/viaje/{inicio}")
-    public ResponseEntity<Object> getViajeByInicio(@PathVariable String inicio) {
+/*    @GetMapping("/viaje/{inicio}")
+    public ResponseEntity<Object> getViajeByInicio(@PathVariable final @NotNull String inicio) {
         try {
             Viaje viaje = vs.findByUbicacionInicio(inicio);
             if (viaje == null) {
@@ -132,7 +144,7 @@ public class ViajeController {
     }
 
     @GetMapping("/viaje/{destino}")
-    public ResponseEntity<Object> getViajeByDestino(@PathVariable String destino) {
+    public ResponseEntity<Object> getViajeByDestino(@PathVariable final @NotNull String destino) {
         try {
             Viaje viaje = vs.findByUbicacionDestino(destino);
             if (viaje == null) {
@@ -142,5 +154,5 @@ public class ViajeController {
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el viaje");
         }
-    }
+    }*/
 }
