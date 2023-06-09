@@ -1,5 +1,6 @@
-package com.tpfinal.gogo.model;
+/*package com.tpfinal.gogo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,9 +17,11 @@ public class Ubicacion {
     private int id;
     @Column(name = "nombre", nullable = false)
     private String nombre;
+    @JsonIgnore
     @OneToOne(mappedBy = "inicio")
     private Viaje viajeInicio;
+    @JsonIgnore
     @OneToOne(mappedBy = "destino")
     private Viaje viajeDestino;
-}
+}*/
 
