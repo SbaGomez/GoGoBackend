@@ -37,12 +37,12 @@ public class ViajeService {
             if ((viaje.getHorarioLlegada()) != null) {
                 v.setHorarioLlegada(viaje.getHorarioLlegada());
             }
-            if ((viaje.getInicio()) != null) {
+/*            if ((viaje.getInicio()) != null) {
                 v.setInicio(viaje.getInicio());
             }
             if ((viaje.getDestino()) != null) {
                 v.setDestino(viaje.getDestino());
-            }
+            }*/
             vr.save(v);
         }
         return v;
@@ -60,15 +60,11 @@ public class ViajeService {
         return vr.findById(id).orElse(null);
     }
 
-    public Viaje findByUbicacionInicio(String inicio) {
+/*    public Viaje findByUbicacionInicio(String inicio) {
         return vr.findByInicio(inicio);
     }
 
-//    public Viaje findByUbicacionInicio(Ubicacion inicio) {
-//        return vr.findByUbicacionInicio(inicio.getNombre());
-//    }
-
     public Viaje findByUbicacionDestino(String destino) {
         return vr.findByDestino(destino);
-    }
+    }*/
 }
