@@ -157,19 +157,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{id}/delete")
-    public ResponseEntity<String> deleteUser(@PathVariable final @NotNull Integer id) {
-        try {
-            if (us.existsById(id)) {
-                us.deleteUser(id);
-                return ResponseEntity.status(OK).body("Usuario " + id + " eliminado con éxito");
-            }
-            return ResponseEntity.status(NOT_FOUND).body("Usuario " + id + " no encontrado");
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
-        }
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUser(@PathVariable final @NotNull Integer id) {
         try {
