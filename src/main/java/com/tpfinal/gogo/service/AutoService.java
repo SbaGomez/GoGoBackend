@@ -1,6 +1,8 @@
 package com.tpfinal.gogo.service;
 
 import com.tpfinal.gogo.model.Auto;
+import com.tpfinal.gogo.model.AutoHistory;
+import com.tpfinal.gogo.repository.AutoHistoryRepository;
 import com.tpfinal.gogo.repository.AutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,14 +12,34 @@ import java.util.List;
 @Service
 public class AutoService {
     private final AutoRepository ar;
+    private final AutoHistoryRepository ahr;
 
     @Autowired
-    public AutoService(AutoRepository autoRepository) {
+    public AutoService(AutoRepository autoRepository, AutoHistoryRepository autoHistoryRepository) {
         this.ar = autoRepository;
+        this.ahr = autoHistoryRepository;
     }
 
     public void addAuto(Auto a) {
         ar.save(a);
+    }
+
+    public void addAutoHistory(AutoHistory a) {
+        ahr.save(a);
+    }
+
+    public void updateAutoHistory(Integer id, AutoHistory autoHistory) {
+        AutoHistory ah = ahr.findById(id).orElse(null);
+        if (ah != null) {
+            if ((autoHistory.getCreationDate()) != null) {
+                ah.setCreationDate(autoHistory.getCreationDate());
+            }
+            if ((autoHistory.getDeletionDate()) != null) {
+                ah.setDeletionDate(autoHistory.getDeletionDate());
+            }
+            ah.setAuto(autoHistory.getAuto());
+            ahr.save(ah);
+        }
     }
 
     public List<Auto> getAll() {
