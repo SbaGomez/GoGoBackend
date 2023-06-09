@@ -63,12 +63,12 @@ public class ValidateService {
         if (v.getHorarioLlegada() == null) {
             errors.add("El horario de llegada es requerido");
         }
-        if (v.getInicio() == null) {
+/*        if (v.getInicio() == null) {
             errors.add("El inicio es requerido");
         }
         if (v.getDestino() == null) {
             errors.add("El destino es requerido");
-        }
+        }*/
         return errors;
     }
 }
