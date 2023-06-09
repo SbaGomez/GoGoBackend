@@ -1,11 +1,13 @@
 package com.tpfinal.gogo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
@@ -17,16 +19,17 @@ public class Viaje {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(name = "horario_salida", nullable = false)
-    private LocalDate horarioSalida;
+    private LocalDateTime horarioSalida;
     @Column(name = "horario_llegada", nullable = false)
-    private LocalDate horarioLlegada;
-//    @Column(name = "chat_id", nullable = false)
-//    private Chat chat;
-    @OneToOne
+    private LocalDateTime horarioLlegada;
+
+/*    @OneToOne
     @JoinColumn(name = "inicio_id", referencedColumnName = "id", nullable = false)
     private Ubicacion inicio;
     @OneToOne
     @JoinColumn(name = "destino_id", referencedColumnName = "id", nullable = false)
-    private Ubicacion destino;
-
+    private Ubicacion destino;*/
+    @JsonIgnore
+    @ManyToMany(mappedBy = "viajes")
+    private List<User> users;
 }
