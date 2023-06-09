@@ -55,6 +55,9 @@ public class UserService {
             if (user.getAuto() != null) {
                 u.setAuto(user.getAuto());
             }
+            if (user.getViajes() != null) {
+                u.setViajes(user.getViajes());
+            }
             ur.save(u);
         }
         return u;
