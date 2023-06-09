@@ -1,9 +1,12 @@
 package com.tpfinal.gogo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
@@ -31,4 +34,15 @@ public class User {
     @OneToOne
     @JoinColumn(name = "auto_id")
     private Auto auto;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<AutoHistory> autoHistoryList;
+    @ManyToMany
+    @JoinTable(
+            name="userxviaje",
+            joinColumns=
+            @JoinColumn(name="user_id"),
+            inverseJoinColumns=
+            @JoinColumn(name="viaje_id"))
+    private List<Viaje> viajes;
 }
