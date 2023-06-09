@@ -2,6 +2,7 @@ package com.tpfinal.gogo.controller;
 
 import com.tpfinal.gogo.exceptions.BadRequestException;
 import com.tpfinal.gogo.model.Auto;
+import com.tpfinal.gogo.model.AutoHistory;
 import com.tpfinal.gogo.model.User;
 import com.tpfinal.gogo.service.AutoService;
 import com.tpfinal.gogo.service.UserService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -54,6 +56,19 @@ public class AutoController {
             int id = Integer.parseInt(request.get("id"));
             user.setAuto(a);
             us.updateUser(id, user);
+
+            // Create an AutoHistory object
+            AutoHistory autoHistory = new AutoHistory();
+            autoHistory.setPatente(a.getPatente());
+            autoHistory.setColor(a.getColor());
+            autoHistory.setModelo(a.getModelo());
+            autoHistory.setMarca(a.getMarca());
+            autoHistory.setAuto(a);
+            autoHistory.setCreationDate(LocalDateTime.now());
+            autoHistory.setUser(us.getUser(id));
+
+            // Save AutoHistory to the repository
+            as.addAutoHistory(autoHistory);
 
             return ResponseEntity.status(OK).body(a);
             } catch (BadRequestException e) {
@@ -101,6 +116,15 @@ public class AutoController {
                 User user = auto.getUser();
                 user.setAuto(null);
                 us.updateUser(user.getId(), user);
+
+                // Create an AutoHistory object
+                AutoHistory autoHistory = new AutoHistory();
+                autoHistory.setAuto(null);
+                autoHistory.setDeletionDate(LocalDateTime.now());
+
+                // Save AutoHistory to the repository
+                as.updateAutoHistory(id, autoHistory);
+
                 as.deleteAuto(id);
                 return ResponseEntity.status(OK).body("Auto " + id + " eliminado con éxito");
             }
