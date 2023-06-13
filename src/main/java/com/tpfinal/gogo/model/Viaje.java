@@ -22,12 +22,11 @@ public class Viaje {
     private LocalDateTime horarioSalida;
     @Column(name = "turno", nullable = false)
     private String turno;
-    @OneToOne
-    @JoinColumn(name = "inicio_id", referencedColumnName = "id", nullable = false)
-    private Ubicacion ubicacionInicio;
-    @OneToOne
-    @JoinColumn(name = "destino_id", referencedColumnName = "id", nullable = false)
-    private Ubicacion ubicacionDestino;
+
+    private String ubicacionInicio;
+
+    private String ubicacionDestino;
+
     @JsonIgnore
     @ManyToMany(mappedBy = "viajes")
     private List<User> users;

@@ -17,11 +17,5 @@ public class Ubicacion {
     private int id;
     @Column(name = "nombre", nullable = false)
     private String nombre;
-    @JsonIgnore
-    @OneToOne(mappedBy = "ubicacionInicio")
-    private Viaje viajeInicio;
-    @JsonIgnore
-    @OneToOne(mappedBy = "ubicacionDestino")
-    private Viaje viajeDestino;
 }
 

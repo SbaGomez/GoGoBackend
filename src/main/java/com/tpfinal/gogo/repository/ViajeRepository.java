@@ -13,7 +13,4 @@ public interface ViajeRepository extends JpaRepository<Viaje, Integer> {
     @Query(value = "select user_id from usersxviajes where viaje_id = :id", nativeQuery = true)
     List<Integer> findViajeUser(Integer id);
 
-    Viaje findByUbicacionInicio(String nombre);
-
-    Viaje findByUbicacionDestino(String nombre);
 }

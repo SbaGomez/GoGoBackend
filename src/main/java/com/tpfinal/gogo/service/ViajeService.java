@@ -60,12 +60,7 @@ public class ViajeService {
         return vr.findById(id).orElse(null);
     }
 
-    public Ubicacion findByUbicacionInicio(Ubicacion inicio) {
-        return ur.findByUbicacionInicio(inicio.getNombre());
+    public boolean existsByNombre(String nombre) {
+        return ur.existsByNombre(nombre);
     }
-
-    public Ubicacion findByUbicacionDestino(Ubicacion destino) {
-        return ur.findByUbicacionDestino(destino.getNombre());
-    }
-
 }

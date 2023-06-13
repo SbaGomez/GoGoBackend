@@ -45,20 +45,15 @@ public class ViajeController {
             v.setHorarioSalida(LocalDateTime.parse(request.get("horarioSalida")));
             v.setTurno(request.get("turno"));
 
-            String inicioNombre = request.get("inicio");
-            String destinoNombre = request.get("destino");
+            String inicio = request.get("inicio");
+            String destino = request.get("destino");
 
-            Ubicacion inicio = new Ubicacion();
-            inicio.setNombre(inicioNombre);
-
-            Ubicacion destino = new Ubicacion();
-            destino.setNombre(destinoNombre);
-
-            Ubicacion foundInicio = vs.findByUbicacionInicio(inicio);
-            Ubicacion foundDestino = vs.findByUbicacionDestino(destino);
-
-            v.setUbicacionInicio(foundInicio);
-            v.setUbicacionDestino(foundDestino);
+            if (vs.existsByNombre(inicio)) {
+                v.setUbicacionInicio(inicio);
+            }
+            if (vs.existsByNombre(destino)) {
+                v.setUbicacionDestino(destino);
+            }
 
             List<String> errors = ValidateService.validateViaje(v);
             if (!errors.isEmpty()) {
