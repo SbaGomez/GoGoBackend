@@ -20,16 +20,16 @@ public class Viaje {
     private int id;
     @Column(name = "horario_salida", nullable = false)
     private LocalDateTime horarioSalida;
-    @Column(name = "horario_llegada", nullable = false)
-    private LocalDateTime horarioLlegada;
-
-/*    @OneToOne
+    @Column(name = "turno", nullable = false)
+    private String turno;
+    @OneToOne
     @JoinColumn(name = "inicio_id", referencedColumnName = "id", nullable = false)
-    private Ubicacion inicio;
+    private Ubicacion ubicacionInicio;
     @OneToOne
     @JoinColumn(name = "destino_id", referencedColumnName = "id", nullable = false)
-    private Ubicacion destino;*/
+    private Ubicacion ubicacionDestino;
     @JsonIgnore
     @ManyToMany(mappedBy = "viajes")
     private List<User> users;
+
 }

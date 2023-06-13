@@ -1,4 +1,4 @@
-/*package com.tpfinal.gogo.model;
+package com.tpfinal.gogo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -18,10 +18,10 @@ public class Ubicacion {
     @Column(name = "nombre", nullable = false)
     private String nombre;
     @JsonIgnore
-    @OneToOne(mappedBy = "inicio")
+    @OneToOne(mappedBy = "ubicacionInicio")
     private Viaje viajeInicio;
     @JsonIgnore
-    @OneToOne(mappedBy = "destino")
+    @OneToOne(mappedBy = "ubicacionDestino")
     private Viaje viajeDestino;
-}*/
+}
 

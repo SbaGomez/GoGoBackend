@@ -1,6 +1,7 @@
 package com.tpfinal.gogo.controller;
 
 import com.tpfinal.gogo.exceptions.BadRequestException;
+import com.tpfinal.gogo.model.Ubicacion;
 import com.tpfinal.gogo.model.User;
 import com.tpfinal.gogo.model.Viaje;
 import com.tpfinal.gogo.service.UserService;
@@ -42,22 +43,29 @@ public class ViajeController {
             Viaje v = new Viaje();
             List<Viaje> viajeList = new ArrayList<Viaje>();
             v.setHorarioSalida(LocalDateTime.parse(request.get("horarioSalida")));
-            v.setHorarioLlegada(LocalDateTime.parse(request.get("horarioLlegada")));
+            v.setTurno(request.get("turno"));
 
-/*            Ubicacion inicio = new Ubicacion();
-            inicio.setNombre(request.get("inicio"));
-            v.setInicio(inicio);
+            String inicioNombre = request.get("inicio");
+            String destinoNombre = request.get("destino");
+
+            Ubicacion inicio = new Ubicacion();
+            inicio.setNombre(inicioNombre);
 
             Ubicacion destino = new Ubicacion();
-            destino.setNombre(request.get("destino"));
-            v.setDestino(destino);*/
+            destino.setNombre(destinoNombre);
+
+            Ubicacion foundInicio = vs.findByUbicacionInicio(inicio);
+            Ubicacion foundDestino = vs.findByUbicacionDestino(destino);
+
+            v.setUbicacionInicio(foundInicio);
+            v.setUbicacionDestino(foundDestino);
 
             List<String> errors = ValidateService.validateViaje(v);
+            if (!errors.isEmpty()) {
+                String errorMessage = String.join("\n", errors);
+                throw new BadRequestException(errorMessage);
+            }
             try {
-                if (!errors.isEmpty()) {
-                    String errorMessage = String.join("\n", errors);
-                    throw new BadRequestException(errorMessage);
-                }
                 vs.addViaje(v);
                 viajeList.add(v);
 

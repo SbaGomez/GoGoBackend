@@ -1,6 +1,7 @@
 package com.tpfinal.gogo.service;
 
 import com.tpfinal.gogo.model.*;
+import com.tpfinal.gogo.repository.UbicacionRepository;
 import com.tpfinal.gogo.repository.ViajeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,10 +11,12 @@ import java.util.List;
 @Service
 public class ViajeService {
     private final ViajeRepository vr;
+    private final UbicacionRepository ur;
 
     @Autowired
-    public ViajeService(ViajeRepository viajeRepository) {
+    public ViajeService(ViajeRepository viajeRepository, UbicacionRepository ubicacionRepository) {
         this.vr = viajeRepository;
+        this.ur = ubicacionRepository;
     }
 
     public void addViaje(Viaje v) {
@@ -34,15 +37,12 @@ public class ViajeService {
             if ((viaje.getHorarioSalida()) != null) {
                 v.setHorarioSalida(viaje.getHorarioSalida());
             }
-            if ((viaje.getHorarioLlegada()) != null) {
-                v.setHorarioLlegada(viaje.getHorarioLlegada());
+           if ((viaje.getUbicacionInicio()) != null) {
+                v.setUbicacionInicio(viaje.getUbicacionInicio());
             }
-/*            if ((viaje.getInicio()) != null) {
-                v.setInicio(viaje.getInicio());
+            if ((viaje.getUbicacionDestino()) != null) {
+                v.setUbicacionDestino(viaje.getUbicacionDestino());
             }
-            if ((viaje.getDestino()) != null) {
-                v.setDestino(viaje.getDestino());
-            }*/
             vr.save(v);
         }
         return v;
@@ -60,11 +60,12 @@ public class ViajeService {
         return vr.findById(id).orElse(null);
     }
 
-/*    public Viaje findByUbicacionInicio(String inicio) {
-        return vr.findByInicio(inicio);
+    public Ubicacion findByUbicacionInicio(Ubicacion inicio) {
+        return ur.findByUbicacionInicio(inicio.getNombre());
     }
 
-    public Viaje findByUbicacionDestino(String destino) {
-        return vr.findByDestino(destino);
-    }*/
+    public Ubicacion findByUbicacionDestino(Ubicacion destino) {
+        return ur.findByUbicacionDestino(destino.getNombre());
+    }
+
 }

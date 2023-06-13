@@ -60,15 +60,12 @@ public class ValidateService {
         if (v.getHorarioSalida() == null) {
             errors.add("El horario de salida es requerido");
         }
-        if (v.getHorarioLlegada() == null) {
-            errors.add("El horario de llegada es requerido");
-        }
-/*        if (v.getInicio() == null) {
+        if (v.getUbicacionInicio() == null) {
             errors.add("El inicio es requerido");
         }
-        if (v.getDestino() == null) {
+        if (v.getUbicacionDestino() == null) {
             errors.add("El destino es requerido");
-        }*/
+        }
         return errors;
     }
 }

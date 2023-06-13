@@ -9,9 +9,11 @@ import java.util.List;
 
 @Repository
 public interface ViajeRepository extends JpaRepository<Viaje, Integer> {
-/*    Viaje findByInicio(String inicio);
-    Viaje findByDestino(String destino);*/
 
     @Query(value = "select user_id from usersxviajes where viaje_id = :id", nativeQuery = true)
     List<Integer> findViajeUser(Integer id);
+
+    Viaje findByUbicacionInicio(String nombre);
+
+    Viaje findByUbicacionDestino(String nombre);
 }
