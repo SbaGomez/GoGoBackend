@@ -135,8 +135,8 @@ public class ViajeController {
 
     @GetMapping("/buscarUbicacion")
     public ResponseEntity<Object> getViajeByUbicacion(@RequestBody Map<String, String> request) {
-        String inicio = request.get("inicio");
-        String destino = request.get("destino");
+        String inicio = request.get("ubicacionInicioBuscarViaje");
+        String destino = request.get("ubicacionDestinoBuscarViaje");
         try {
             List<Viaje> viajes = vs.findByUbicacion(inicio, destino);
             if (viajes.isEmpty()) {
