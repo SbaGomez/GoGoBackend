@@ -133,6 +133,7 @@ public class ViajeController {
         }
     }
 
+    @Async
     @GetMapping("/buscarUbicacion")
     public CompletableFuture<ResponseEntity<Object>> getViajeByUbicacion(@RequestBody Map<String, String> request) {
         return CompletableFuture.supplyAsync(() -> {
