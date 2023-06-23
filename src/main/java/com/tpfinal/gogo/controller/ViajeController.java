@@ -144,9 +144,23 @@ public class ViajeController {
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el viaje");
         }
+    }*/
+
+    @GetMapping("/viaje/{inicio}")
+    public ResponseEntity<Object> getViajeByUbicacion(@PathVariable final @NotNull String inicio, @PathVariable final @NotNull String destino) {
+        try {
+            List<Viaje> viajes = vs.findByUbicacion(inicio, destino);
+            if (viajes.isEmpty()) {
+                return ResponseEntity.status(NOT_FOUND).body("No se encontraron viajes con inicio en (" + inicio + ")");
+            }
+            return ResponseEntity.status(OK).body(viajes);
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar los viajes");
+        }
     }
 
-    @GetMapping("/viaje/{destino}")
+
+/*    @GetMapping("/viaje/{destino}")
     public ResponseEntity<Object> getViajeByDestino(@PathVariable final @NotNull String destino) {
         try {
             Viaje viaje = vs.findByUbicacionDestino(destino);

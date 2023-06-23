@@ -63,4 +63,10 @@ public class ViajeService {
     public boolean existsByNombre(String nombre) {
         return ur.existsByNombre(nombre);
     }
+
+
+    public List<Viaje> findByUbicacion(String ubicacionInicio, String ubicacionDestino) {
+        return vr.findViajesUbicacion(ubicacionInicio, ubicacionDestino);
+    }
+
 }
