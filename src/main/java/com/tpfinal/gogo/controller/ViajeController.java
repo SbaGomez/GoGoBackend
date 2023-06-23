@@ -133,25 +133,14 @@ public class ViajeController {
         }
     }
 
-/*    @GetMapping("/viaje/{inicio}")
-    public ResponseEntity<Object> getViajeByInicio(@PathVariable final @NotNull String inicio) {
-        try {
-            Viaje viaje = vs.findByUbicacionInicio(inicio);
-            if (viaje == null) {
-                return ResponseEntity.status(NOT_FOUND).body("Viaje con inicio (" + inicio + ") no encontrado");
-            }
-            return ResponseEntity.status(OK).body(new ViajeResponse(viaje, "Viaje con inicio (" + inicio + ") recuperado con éxito"));
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el viaje");
-        }
-    }*/
-
-    @GetMapping("/viaje/{inicio}")
-    public ResponseEntity<Object> getViajeByUbicacion(@PathVariable final @NotNull String inicio, @PathVariable final @NotNull String destino) {
+    @GetMapping("/viaje/buscarUbicacion")
+    public ResponseEntity<Object> getViajeByUbicacion(@RequestBody Map<String, String> request) {
+        String inicio = request.get("inicio");
+        String destino = request.get("destino");
         try {
             List<Viaje> viajes = vs.findByUbicacion(inicio, destino);
             if (viajes.isEmpty()) {
-                return ResponseEntity.status(NOT_FOUND).body("No se encontraron viajes con inicio en (" + inicio + ")");
+                return ResponseEntity.status(NOT_FOUND).body("No se encontraron viajes");
             }
             return ResponseEntity.status(OK).body(viajes);
         } catch (Exception e) {
@@ -159,17 +148,4 @@ public class ViajeController {
         }
     }
 
-
-/*    @GetMapping("/viaje/{destino}")
-    public ResponseEntity<Object> getViajeByDestino(@PathVariable final @NotNull String destino) {
-        try {
-            Viaje viaje = vs.findByUbicacionDestino(destino);
-            if (viaje == null) {
-                return ResponseEntity.status(NOT_FOUND).body("Viaje con inicio (" + destino + ") no encontrado");
-            }
-            return ResponseEntity.status(OK).body(new ViajeResponse(viaje, "Viaje con inicio (" + destino + ") recuperado con éxito"));
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el viaje");
-        }
-    }*/
 }
