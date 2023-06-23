@@ -134,13 +134,12 @@ public class ViajeController {
     }
 
     @Async
-    @GetMapping("/buscarUbicacion")
-    public CompletableFuture<ResponseEntity<Object>> getViajeByUbicacion(@RequestBody Map<String, String> request) {
+    @GetMapping("/buscarUbicacion/{ubicacionInicioBuscarViaje}/{ubicacionDestinoBuscarViaje}")
+    public CompletableFuture<ResponseEntity<Object>> getViajeByUbicacion(@PathVariable final @NotNull String ubicacionInicioBuscarViaje,
+                                                                         @PathVariable final @NotNull String ubicacionDestinoBuscarViaje) {
         return CompletableFuture.supplyAsync(() -> {
-            String inicio = request.get("ubicacionInicioBuscarViaje");
-            String destino = request.get("ubicacionDestinoBuscarViaje");
             try {
-                List<Viaje> viajes = vs.findByUbicacion(inicio, destino);
+                List<Viaje> viajes = vs.findByUbicacion(ubicacionInicioBuscarViaje, ubicacionDestinoBuscarViaje);
                 if (viajes.isEmpty()) {
                     return ResponseEntity.status(NOT_FOUND).body("No se encontraron viajes");
                 }
