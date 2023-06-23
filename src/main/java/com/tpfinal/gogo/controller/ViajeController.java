@@ -133,7 +133,7 @@ public class ViajeController {
         }
     }
 
-    @GetMapping("/viaje/buscarUbicacion")
+    @GetMapping("/buscarUbicacion")
     public ResponseEntity<Object> getViajeByUbicacion(@RequestBody Map<String, String> request) {
         String inicio = request.get("inicio");
         String destino = request.get("destino");
