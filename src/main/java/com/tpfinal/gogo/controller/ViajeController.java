@@ -134,18 +134,20 @@ public class ViajeController {
     }
 
     @GetMapping("/buscarUbicacion")
-    public ResponseEntity<Object> getViajeByUbicacion(@RequestBody Map<String, String> request) {
-        String inicio = request.get("ubicacionInicioBuscarViaje");
-        String destino = request.get("ubicacionDestinoBuscarViaje");
-        try {
-            List<Viaje> viajes = vs.findByUbicacion(inicio, destino);
-            if (viajes.isEmpty()) {
-                return ResponseEntity.status(NOT_FOUND).body("No se encontraron viajes");
+    public CompletableFuture<ResponseEntity<Object>> getViajeByUbicacion(@RequestBody Map<String, String> request) {
+        return CompletableFuture.supplyAsync(() -> {
+            String inicio = request.get("ubicacionInicioBuscarViaje");
+            String destino = request.get("ubicacionDestinoBuscarViaje");
+            try {
+                List<Viaje> viajes = vs.findByUbicacion(inicio, destino);
+                if (viajes.isEmpty()) {
+                    return ResponseEntity.status(NOT_FOUND).body("No se encontraron viajes");
+                }
+                return ResponseEntity.status(OK).body(viajes);
+            } catch (Exception e) {
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar los viajes");
             }
-            return ResponseEntity.status(OK).body(viajes);
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar los viajes");
-        }
+        });
     }
 
 }
