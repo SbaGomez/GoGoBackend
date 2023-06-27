@@ -37,12 +37,5 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<AutoHistory> autoHistoryList;
-    @ManyToMany
-    @JoinTable(
-            name="userxviaje",
-            joinColumns=
-            @JoinColumn(name="user_id"),
-            inverseJoinColumns=
-            @JoinColumn(name="viaje_id"))
-    private List<Viaje> viajes;
+
 }

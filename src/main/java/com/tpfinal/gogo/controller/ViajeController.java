@@ -41,12 +41,14 @@ public class ViajeController {
     public CompletableFuture<ResponseEntity<Object>> addViaje(@RequestBody Map<String, String> request) {
         return CompletableFuture.supplyAsync(() -> {
             Viaje v = new Viaje();
-            List<Viaje> viajeList = new ArrayList<Viaje>();
             v.setHorarioSalida(LocalDateTime.parse(request.get("horarioSalida")));
             v.setTurno(request.get("turno"));
 
             String inicio = request.get("inicio");
             String destino = request.get("destino");
+
+            int userId = Integer.parseInt(request.get("userId"));
+            int autoId = Integer.parseInt(request.get("autoId"));
 
             if (vs.existsByNombre(inicio)) {
                 v.setUbicacionInicio(inicio);
@@ -61,13 +63,10 @@ public class ViajeController {
                 throw new BadRequestException(errorMessage);
             }
             try {
-                vs.addViaje(v);
-                viajeList.add(v);
+                v.setChofer(userId);
+                v.setAutoId(autoId);
 
-                User user = new User();
-                int id = Integer.parseInt(request.get("id"));
-                user.setViajes(viajeList);
-                us.updateUser(id, user);
+                vs.addViaje(v);
 
                 return ResponseEntity.status(OK).body(v);
             } catch (BadRequestException e) {

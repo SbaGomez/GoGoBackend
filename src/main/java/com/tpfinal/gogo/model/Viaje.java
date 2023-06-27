@@ -22,13 +22,9 @@ public class Viaje {
     private LocalDateTime horarioSalida;
     @Column(name = "turno", nullable = false)
     private String turno;
-
     private String ubicacionInicio;
-
     private String ubicacionDestino;
-
-    @JsonIgnore
-    @ManyToMany(mappedBy = "viajes")
-    private List<User> users;
-
+    private int chofer;
+    private int autoId;
+    private int[] users;
 }
