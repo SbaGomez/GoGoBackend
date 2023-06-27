@@ -68,4 +68,8 @@ public class ViajeService {
         return vr.findViajesUbicacion(ubicacionInicio, ubicacionDestino);
     }
 
+    public List<Viaje> findMisViajesById(Integer id) {
+        return vr.findViajesUser(id);
+    }
+
 }

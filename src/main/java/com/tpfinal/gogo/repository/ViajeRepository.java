@@ -10,8 +10,8 @@ import java.util.List;
 @Repository
 public interface ViajeRepository extends JpaRepository<Viaje, Integer> {
 
-    @Query(value = "select user_id from usersxviajes where viaje_id = :id", nativeQuery = true)
-    List<Integer> findViajeUser(Integer id);
+    @Query(value = "select * from userxviaje JOIN viaje ON userxviaje.viaje_id = viaje.id WHERE userxviaje.user_id = :id", nativeQuery = true)
+    List<Viaje> findViajesUser(Integer id);
 
     @Query(value = "select * from viaje where ubicacion_inicio = :ubicacionInicio and ubicacion_destino = :ubicacionDestino", nativeQuery = true)
     List<Viaje> findViajesUbicacion(String ubicacionInicio, String ubicacionDestino);

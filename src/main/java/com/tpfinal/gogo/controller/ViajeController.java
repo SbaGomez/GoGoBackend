@@ -134,6 +134,22 @@ public class ViajeController {
     }
 
     @Async
+    @GetMapping("/buscarMisViajes/{id}")
+    public CompletableFuture<ResponseEntity<Object>> getMisViajes(@PathVariable final @NotNull Integer id) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                List<Viaje> viajes = vs.findMisViajesById(id);
+                if (viajes.isEmpty()) {
+                    return ResponseEntity.status(NOT_FOUND).body("No se encontraron viajes");
+                }
+                return ResponseEntity.status(OK).body(viajes);
+            } catch (Exception e) {
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar los viajes");
+            }
+        });
+    }
+
+    @Async
     @GetMapping("/buscarUbicacion/{ubicacionInicioBuscarViaje}/{ubicacionDestinoBuscarViaje}")
     public CompletableFuture<ResponseEntity<Object>> getViajeByUbicacion(@PathVariable final @NotNull String ubicacionInicioBuscarViaje,
                                                                          @PathVariable final @NotNull String ubicacionDestinoBuscarViaje) {
