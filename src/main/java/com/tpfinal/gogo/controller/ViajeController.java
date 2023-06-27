@@ -174,6 +174,9 @@ public class ViajeController {
                 List<Integer> newUsers = new ArrayList<Integer>();
                 List<Integer> users = viaje.getUsers();
                 if (users != null) {
+                    if (users.contains(userId)) {
+                        return ResponseEntity.status(CONFLICT).body("El usuario ya está unido al viaje");
+                    }
                     users.add(userId);
                     viaje.setUsers(users);
                 }
