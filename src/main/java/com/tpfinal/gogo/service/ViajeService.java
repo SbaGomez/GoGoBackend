@@ -3,6 +3,7 @@ package com.tpfinal.gogo.service;
 import com.tpfinal.gogo.model.*;
 import com.tpfinal.gogo.repository.UbicacionRepository;
 import com.tpfinal.gogo.repository.ViajeRepository;
+import com.tpfinal.gogo.repository.ViajeUserAutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,13 @@ import java.util.List;
 @Service
 public class ViajeService {
     private final ViajeRepository vr;
+    private final ViajeUserAutoRepository vuar;
     private final UbicacionRepository ur;
 
     @Autowired
-    public ViajeService(ViajeRepository viajeRepository, UbicacionRepository ubicacionRepository) {
+    public ViajeService(ViajeRepository viajeRepository, ViajeUserAutoRepository viajeUserAutoRepository, UbicacionRepository ubicacionRepository) {
         this.vr = viajeRepository;
+        this.vuar = viajeUserAutoRepository;
         this.ur = ubicacionRepository;
     }
 
@@ -65,11 +68,11 @@ public class ViajeService {
     }
 
     public List<ViajeUserAuto> findByUbicacion(String ubicacionInicio, String ubicacionDestino) {
-        return vr.findViajesUbicacion(ubicacionInicio, ubicacionDestino);
+        return vuar.findViajesUbicacion(ubicacionInicio, ubicacionDestino);
     }
 
     public List<ViajeUserAuto> findMisViajesById(Integer userId) {
-        return vr.findViajesUser(userId);
+        return vuar.findViajesUser(userId);
     }
 
 }

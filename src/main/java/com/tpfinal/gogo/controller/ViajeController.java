@@ -131,11 +131,11 @@ public class ViajeController {
     }
 
     @Async
-    @GetMapping("/buscarMisViajes/{id}")
-    public CompletableFuture<ResponseEntity<Object>> getMisViajes(@PathVariable final @NotNull Integer id) {
+    @GetMapping("/buscarMisViajes/{userId}")
+    public CompletableFuture<ResponseEntity<Object>> getMisViajes(@PathVariable final @NotNull Integer userId) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                List<ViajeUserAuto> viajes = vs.findMisViajesById(id);
+                List<ViajeUserAuto> viajes = vs.findMisViajesById(userId);
                 if (viajes.isEmpty()) {
                     return ResponseEntity.status(NOT_FOUND).body("No se encontraron viajes");
                 }

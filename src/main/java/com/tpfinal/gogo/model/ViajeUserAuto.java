@@ -1,5 +1,7 @@
 package com.tpfinal.gogo.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -7,9 +9,11 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
+@Entity
 public class ViajeUserAuto {
 
     //viaje
+    @Id
     private int id;
     private LocalDateTime horarioSalida;
     private String turno;
