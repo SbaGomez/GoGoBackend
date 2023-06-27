@@ -1,9 +1,8 @@
 package com.tpfinal.gogo.controller;
 
 import com.tpfinal.gogo.exceptions.BadRequestException;
-import com.tpfinal.gogo.model.Ubicacion;
-import com.tpfinal.gogo.model.User;
 import com.tpfinal.gogo.model.Viaje;
+import com.tpfinal.gogo.model.ViajeUserAuto;
 import com.tpfinal.gogo.service.UserService;
 import com.tpfinal.gogo.service.ViajeService;
 import com.tpfinal.gogo.tools.ValidateService;
@@ -14,7 +13,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -137,7 +135,7 @@ public class ViajeController {
     public CompletableFuture<ResponseEntity<Object>> getMisViajes(@PathVariable final @NotNull Integer id) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                List<Viaje> viajes = vs.findMisViajesById(id);
+                List<ViajeUserAuto> viajes = vs.findMisViajesById(id);
                 if (viajes.isEmpty()) {
                     return ResponseEntity.status(NOT_FOUND).body("No se encontraron viajes");
                 }
@@ -154,7 +152,7 @@ public class ViajeController {
                                                                          @PathVariable final @NotNull String ubicacionDestinoBuscarViaje) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                List<Viaje> viajes = vs.findByUbicacion(ubicacionInicioBuscarViaje, ubicacionDestinoBuscarViaje);
+                List<ViajeUserAuto> viajes = vs.findByUbicacion(ubicacionInicioBuscarViaje, ubicacionDestinoBuscarViaje);
                 if (viajes.isEmpty()) {
                     return ResponseEntity.status(NOT_FOUND).body("No se encontraron viajes");
                 }

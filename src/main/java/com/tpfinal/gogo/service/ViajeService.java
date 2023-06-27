@@ -64,12 +64,12 @@ public class ViajeService {
         return ur.existsByNombre(nombre);
     }
 
-    public List<Viaje> findByUbicacion(String ubicacionInicio, String ubicacionDestino) {
+    public List<ViajeUserAuto> findByUbicacion(String ubicacionInicio, String ubicacionDestino) {
         return vr.findViajesUbicacion(ubicacionInicio, ubicacionDestino);
     }
 
-    public List<Viaje> findMisViajesById(Integer id) {
-        return vr.findViajesUser(id);
+    public List<ViajeUserAuto> findMisViajesById(Integer userId) {
+        return vr.findViajesUser(userId);
     }
 
 }
