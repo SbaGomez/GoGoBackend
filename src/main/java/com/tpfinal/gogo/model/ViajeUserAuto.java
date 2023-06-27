@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
@@ -23,7 +24,7 @@ public class ViajeUserAuto {
     private String ubicacionDestino;
     private int chofer;
     private int autoId;
-    private int[] users;
+    private List<Integer> users;
 
     //user
     private String nombre;
