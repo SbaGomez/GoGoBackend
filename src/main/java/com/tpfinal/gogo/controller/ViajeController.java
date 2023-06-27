@@ -120,7 +120,7 @@ public class ViajeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getViaje(@PathVariable final @NotNull Integer id) {
+    public ResponseEntity<Object> getViajeUserAuto(@PathVariable final @NotNull Integer id) {
         try {
             ViajeUserAuto viaje = vs.getViajeUserAuto(id);
             if (viaje == null) {

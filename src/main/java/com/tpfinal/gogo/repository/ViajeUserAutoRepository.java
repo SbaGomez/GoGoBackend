@@ -17,7 +17,7 @@ public interface ViajeUserAutoRepository extends JpaRepository<ViajeUserAuto, In
 
     @Query(value =
             "select v.*, u.nombre, u.apellido, u.edad, u.sexo, a.color, a.marca, a.modelo, a.patente from viaje v " +
-                    "INNER JOIN auto a ON a.id = v.auto_id INNER JOIN user u ON u.id = v.chofer WHERE id = :viajeId", nativeQuery = true)
+                    "INNER JOIN auto a ON a.id = v.auto_id INNER JOIN user u ON u.id = v.chofer WHERE v.id = :viajeId", nativeQuery = true)
     ViajeUserAuto findByIdViaje(Integer viajeId);
 
     @Query(value =
