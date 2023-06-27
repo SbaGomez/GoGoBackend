@@ -40,11 +40,14 @@ public class ViajeService {
             if ((viaje.getHorarioSalida()) != null) {
                 v.setHorarioSalida(viaje.getHorarioSalida());
             }
-           if ((viaje.getUbicacionInicio()) != null) {
+            if ((viaje.getUbicacionInicio()) != null) {
                 v.setUbicacionInicio(viaje.getUbicacionInicio());
             }
             if ((viaje.getUbicacionDestino()) != null) {
                 v.setUbicacionDestino(viaje.getUbicacionDestino());
+            }
+            if ((viaje.getUsers()) != null) {
+                v.setUsers(viaje.getUsers());
             }
             vr.save(v);
         }
@@ -63,6 +66,10 @@ public class ViajeService {
         return vr.findById(id).orElse(null);
     }
 
+    public ViajeUserAuto getViajeUserAuto(Integer id) {
+        return vuar.findByIdViaje(id);
+    }
+
     public boolean existsByNombre(String nombre) {
         return ur.existsByNombre(nombre);
     }
@@ -73,6 +80,16 @@ public class ViajeService {
 
     public List<ViajeUserAuto> findMisViajesById(Integer userId) {
         return vuar.findViajesUser(userId);
+    }
+
+    public void joinViaje(Integer id, Viaje viaje) {
+        Viaje v = vr.findById(id).orElse(null);
+        if (v != null) {
+            if ((viaje.getUsers()) != null) {
+                v.setUsers(viaje.getUsers());
+            }
+            vr.save(v);
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package com.tpfinal.gogo.controller;
 
 import com.tpfinal.gogo.exceptions.BadRequestException;
+import com.tpfinal.gogo.model.User;
 import com.tpfinal.gogo.model.Viaje;
 import com.tpfinal.gogo.model.ViajeUserAuto;
 import com.tpfinal.gogo.service.UserService;
@@ -13,6 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -120,11 +122,11 @@ public class ViajeController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getViaje(@PathVariable final @NotNull Integer id) {
         try {
-            Viaje viaje = vs.getViaje(id);
+            ViajeUserAuto viaje = vs.getViajeUserAuto(id);
             if (viaje == null) {
                 return ResponseEntity.status(NOT_FOUND).body("Viaje " + id + " no encontrado");
             }
-            return ResponseEntity.status(OK).body(new ViajeResponse(viaje, "Viaje " + id + " recuperado con éxito"));
+            return ResponseEntity.status(OK).body(viaje);
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el viaje");
         }
@@ -159,6 +161,32 @@ public class ViajeController {
                 return ResponseEntity.status(OK).body(viajes);
             } catch (Exception e) {
                 return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar los viajes");
+            }
+        });
+    }
+
+    @Async
+    @PostMapping("/{userId}/{viajeId}/joinViaje")
+    public CompletableFuture<ResponseEntity<Object>> joinViaje(@PathVariable final @NotNull Integer userId, @PathVariable final @NotNull Integer viajeId ) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Viaje viaje = vs.getViaje(viajeId);
+                List<Integer> newUsers = new ArrayList<Integer>();
+                List<Integer> users = viaje.getUsers();
+                if (users != null) {
+                    users.add(userId);
+                    viaje.setUsers(users);
+                }
+                if (users == null) {
+                    newUsers.add(userId);
+                    viaje.setUsers(newUsers);
+                }
+
+                vs.joinViaje(viajeId, viaje);
+
+                return ResponseEntity.status(OK).body(new ViajeResponse(viaje, "Viaje " + viajeId + " actualizado con éxito"));
+            } catch (Exception e) {
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
             }
         });
     }
