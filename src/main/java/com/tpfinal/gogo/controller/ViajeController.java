@@ -1,7 +1,6 @@
 package com.tpfinal.gogo.controller;
 
 import com.tpfinal.gogo.exceptions.BadRequestException;
-import com.tpfinal.gogo.model.User;
 import com.tpfinal.gogo.model.Viaje;
 import com.tpfinal.gogo.model.ViajeUserAuto;
 import com.tpfinal.gogo.service.UserService;
@@ -143,6 +142,7 @@ public class ViajeController {
                 }
                 return ResponseEntity.status(OK).body(viajes);
             } catch (Exception e) {
+                e.printStackTrace();
                 return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar los viajes");
             }
         });
@@ -185,9 +185,29 @@ public class ViajeController {
                     viaje.setUsers(newUsers);
                 }
 
-                vs.joinViaje(viajeId, viaje);
+                vs.joinLeaveViaje(viajeId, viaje);
 
                 return ResponseEntity.status(OK).body(new ViajeResponse(viaje, "Viaje " + viajeId + " actualizado con éxito"));
+            } catch (Exception e) {
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
+            }
+        });
+    }
+
+    @Async
+    @PostMapping("/{userId}/{viajeId}/leaveViaje")
+    public CompletableFuture<ResponseEntity<Object>> leaveViaje(@PathVariable final @NotNull Integer userId, @PathVariable final @NotNull Integer viajeId ) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Viaje viaje = vs.getViaje(viajeId);
+                List<Integer> users = viaje.getUsers();
+                if (users != null) {
+                    users.remove(userId);
+                    viaje.setUsers(users);
+                    vs.joinLeaveViaje(viajeId, viaje);
+                    return ResponseEntity.status(OK).body("Viaje cancelado con éxito");
+                }
+                return ResponseEntity.status(NOT_FOUND).body("Usuario no encontrado");
             } catch (Exception e) {
                 return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
             }
