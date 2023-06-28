@@ -4,8 +4,10 @@ import com.tpfinal.gogo.exceptions.BadRequestException;
 import com.tpfinal.gogo.model.Auto;
 import com.tpfinal.gogo.model.AutoHistory;
 import com.tpfinal.gogo.model.User;
+import com.tpfinal.gogo.model.Viaje;
 import com.tpfinal.gogo.service.AutoService;
 import com.tpfinal.gogo.service.UserService;
+import com.tpfinal.gogo.service.ViajeService;
 import com.tpfinal.gogo.tools.ValidateService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class AutoController {
     private AutoService as;
     @Autowired
     private UserService us;
+    @Autowired
+    private ViajeService vs;
 
     private record AutoListResponse(List<Auto> autos, String message) {
     }
@@ -50,27 +54,33 @@ public class AutoController {
                     String errorMessage = String.join("\n", errors);
                     throw new BadRequestException(errorMessage);
                 }
-            as.addAuto(a);
 
-            User user = new User();
-            int id = Integer.parseInt(request.get("id"));
-            user.setAuto(a);
-            us.updateUser(id, user);
+            Integer id = null;
+            String idString = request.get("id");
+            if (idString != null) {
+                id = Integer.parseInt(idString);
+                as.addAuto(a);
+                User user = new User();
+                user.setAuto(a);
+                us.updateUser(id, user);
 
-            // Create an AutoHistory object
-            AutoHistory autoHistory = new AutoHistory();
-            autoHistory.setPatente(a.getPatente());
-            autoHistory.setColor(a.getColor());
-            autoHistory.setModelo(a.getModelo());
-            autoHistory.setMarca(a.getMarca());
-            autoHistory.setAuto(a);
-            autoHistory.setCreationDate(LocalDateTime.now());
-            autoHistory.setUser(us.getUser(id));
+                // Create an AutoHistory object
+                AutoHistory autoHistory = new AutoHistory();
+                autoHistory.setPatente(a.getPatente());
+                autoHistory.setColor(a.getColor());
+                autoHistory.setModelo(a.getModelo());
+                autoHistory.setMarca(a.getMarca());
+                autoHistory.setAuto(a);
+                autoHistory.setCreationDate(LocalDateTime.now());
+                autoHistory.setUser(us.getUser(id));
 
-            // Save AutoHistory to the repository
-            as.addAutoHistory(autoHistory);
+                // Save AutoHistory to the repository
+                as.addAutoHistory(autoHistory);
 
-            return ResponseEntity.status(OK).body(a);
+                return ResponseEntity.status(OK).body(a);
+
+            } else { return ResponseEntity.status(BAD_REQUEST).body("Id de usuario no encontrado"); }
+
             } catch (BadRequestException e) {
                 return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
             } catch (IllegalArgumentException e) {
@@ -113,20 +123,25 @@ public class AutoController {
         try {
             Auto auto = as.getAuto(id);
             if (auto != null) {
-                User user = auto.getUser();
-                user.setAuto(null);
-                us.updateUser(user.getId(), user);
+                List<Viaje> viajes = vs.getViajesByAutoId(id);
+                if (viajes.isEmpty()) {
+                    User user = auto.getUser();
+                    user.setAuto(null);
+                    us.updateUser(user.getId(), user);
 
-                // Create an AutoHistory object
-                AutoHistory autoHistory = new AutoHistory();
-                autoHistory.setAuto(null);
-                autoHistory.setDeletionDate(LocalDateTime.now());
+                    // Create an AutoHistory object
+                    AutoHistory autoHistory = new AutoHistory();
+                    autoHistory.setAuto(null);
+                    autoHistory.setDeletionDate(LocalDateTime.now());
 
-                // Save AutoHistory to the repository
-                as.updateAutoHistory(id, autoHistory);
+                    // Save AutoHistory to the repository
+                    as.updateAutoHistory(id, autoHistory);
 
-                as.deleteAuto(id);
-                return ResponseEntity.status(OK).body("Auto " + id + " eliminado con éxito");
+                    as.deleteAuto(id);
+                    return ResponseEntity.status(OK).body("Auto " + id + " eliminado con éxito");
+                } else {
+                    return ResponseEntity.status(BAD_REQUEST).body("Auto " + id + " tiene un viaje en progreso");
+                }
             }
             return ResponseEntity.status(NOT_FOUND).body("Auto " + id + " no encontrado");
         } catch (Exception e) {
