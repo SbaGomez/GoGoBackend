@@ -8,6 +8,7 @@ import com.tpfinal.gogo.service.AutoService;
 import com.tpfinal.gogo.service.UserService;
 import com.tpfinal.gogo.service.ViajeService;
 import com.tpfinal.gogo.tools.ValidateService;
+import io.micrometer.common.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -51,8 +52,8 @@ public class ViajeController {
             String inicio = request.get("inicio");
             String destino = request.get("destino");
 
-            int userId = Integer.parseInt(request.get("userId"));
-            int autoId = Integer.parseInt(request.get("autoId"));
+            String user = request.get("userId");
+            String auto = request.get("autoId");
 
             if (vs.existsByNombre(inicio)) {
                 v.setUbicacionInicio(inicio);
@@ -60,22 +61,29 @@ public class ViajeController {
             if (vs.existsByNombre(destino)) {
                 v.setUbicacionDestino(destino);
             }
-
-            List<String> errors = ValidateService.validateViaje(v);
-            if (!errors.isEmpty()) {
-                String errorMessage = String.join("\n", errors);
-                throw new BadRequestException(errorMessage);
-            }
             try {
-                if (!us.existsById(userId)) {
-                    return ResponseEntity.status(BAD_REQUEST).body("El usuario no existe");
-                }
-                if (!as.existsById(autoId)) {
-                    return ResponseEntity.status(BAD_REQUEST).body("El auto no existe");
+                if (StringUtils.isNotBlank(user)) {
+                    int userId = Integer.parseInt(user);
+                    if (!us.existsById(userId)) {
+                        return ResponseEntity.status(BAD_REQUEST).body("El usuario no existe");
+                    }
+                    v.setChofer(userId);
                 }
 
-                v.setChofer(userId);
-                v.setAutoId(autoId);
+                if (StringUtils.isNotBlank(auto)) {
+                    int autoId = Integer.parseInt(auto);
+                    if (!as.existsById(autoId)) {
+                        return ResponseEntity.status(BAD_REQUEST).body("El auto no existe");
+                    }
+                    v.setAutoId(autoId);
+                }
+
+                List<String> errors = ValidateService.validateViaje(v);
+                if (!errors.isEmpty()) {
+                    String errorMessage = String.join("\n", errors);
+                    throw new BadRequestException(errorMessage);
+                }
+
                 v.setExpirationDate(v.getHorarioSalida().plusHours(1));
 
                 vs.addViaje(v);
