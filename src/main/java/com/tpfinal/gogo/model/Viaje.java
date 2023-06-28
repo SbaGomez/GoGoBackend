@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,5 +28,6 @@ public class Viaje {
     private String ubicacionDestino;
     private int chofer;
     private int autoId;
+
     private List<Integer> users;
 }
