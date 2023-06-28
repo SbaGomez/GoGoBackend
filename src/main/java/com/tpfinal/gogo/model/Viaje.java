@@ -31,6 +31,8 @@ public class Viaje {
     private int chofer;
     @Column(nullable = false)
     private int autoId;
+    @Column(name = "capacidad", nullable = false)
+    private int maxCapacidad;
 
     private List<Integer> users;
 }
