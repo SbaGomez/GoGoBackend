@@ -1,8 +1,10 @@
 package com.tpfinal.gogo.controller;
 
 import com.tpfinal.gogo.exceptions.BadRequestException;
+import com.tpfinal.gogo.model.Auto;
 import com.tpfinal.gogo.model.Viaje;
 import com.tpfinal.gogo.model.ViajeUserAuto;
+import com.tpfinal.gogo.service.AutoService;
 import com.tpfinal.gogo.service.UserService;
 import com.tpfinal.gogo.service.ViajeService;
 import com.tpfinal.gogo.tools.ValidateService;
@@ -28,6 +30,8 @@ public class ViajeController {
     private ViajeService vs;
     @Autowired
     private UserService us;
+    @Autowired
+    private AutoService as;
 
     private record ViajeListResponse(List<Viaje> viajes, String message) {
     }
@@ -62,6 +66,13 @@ public class ViajeController {
                 throw new BadRequestException(errorMessage);
             }
             try {
+                if (!us.existsById(userId)) {
+                    return ResponseEntity.status(BAD_REQUEST).body("El usuario no existe");
+                }
+                if (!as.existsById(autoId)) {
+                    return ResponseEntity.status(BAD_REQUEST).body("El auto no existe");
+                }
+
                 v.setChofer(userId);
                 v.setAutoId(autoId);
                 v.setExpirationDate(v.getHorarioSalida().plusHours(1));
