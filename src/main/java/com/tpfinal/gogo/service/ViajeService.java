@@ -82,7 +82,7 @@ public class ViajeService {
         return vuar.findViajesUser(userId);
     }
 
-    public void joinViaje(Integer id, Viaje viaje) {
+    public void joinLeaveViaje(Integer id, Viaje viaje) {
         Viaje v = vr.findById(id).orElse(null);
         if (v != null) {
             if ((viaje.getUsers()) != null) {
