@@ -66,6 +66,24 @@ public class ValidateService {
         if (v.getUbicacionDestino() == null) {
             errors.add("El destino es requerido");
         }
+        if (v.getTurno() == null) {
+            errors.add("El turno es requerido");
+        }
+        if (v.getMaxCapacidad() == 0) {
+            errors.add("La capacidad máxima es requerida");
+        } else if (v.getMaxCapacidad() < 1) {
+            errors.add("La capacidad máxima debe ser mayor o igual a 1");
+        }
+        if (v.getAutoId() == 0) {
+            errors.add("El id del auto es requerido");
+        } else if (v.getAutoId() < 1) {
+            errors.add("El id del auto debe ser mayor o igual a 1");
+        }
+        if (v.getChofer() == 0) {
+            errors.add("El id del chofer es requerido");
+        } else if (v.getChofer() < 1) {
+            errors.add("El id del chofer debe ser mayor o igual a 1");
+        }
         return errors;
     }
 }
