@@ -64,6 +64,7 @@ public class ViajeController {
             try {
                 v.setChofer(userId);
                 v.setAutoId(autoId);
+                v.setExpirationDate(v.getHorarioSalida().plusHours(1));
 
                 vs.addViaje(v);
 

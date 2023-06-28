@@ -19,11 +19,17 @@ public class Viaje {
     private int id;
     @Column(name = "horario_salida", nullable = false)
     private LocalDateTime horarioSalida;
+    @Column(nullable = false)
+    private LocalDateTime expirationDate;
     @Column(name = "turno", nullable = false)
     private String turno;
+    @Column(nullable = false)
     private String ubicacionInicio;
+    @Column(nullable = false)
     private String ubicacionDestino;
+    @Column(nullable = false)
     private int chofer;
+    @Column(nullable = false)
     private int autoId;
 
     private List<Integer> users;
