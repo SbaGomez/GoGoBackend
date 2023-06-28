@@ -23,6 +23,7 @@ public class ViajeUserAuto {
     private String ubicacionDestino;
     private int chofer;
     private int autoId;
+    private int maxCapacidad;
     private List<Integer> users;
 
     //user
