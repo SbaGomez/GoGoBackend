@@ -46,6 +46,7 @@ public class ViajeController {
             Viaje v = new Viaje();
             v.setHorarioSalida(LocalDateTime.parse(request.get("horarioSalida")));
             v.setTurno(request.get("turno"));
+            v.setMaxCapacidad(Integer.parseInt(request.get("capacidad")));
 
             String inicio = request.get("inicio");
             String destino = request.get("destino");
@@ -154,7 +155,6 @@ public class ViajeController {
                 }
                 return ResponseEntity.status(OK).body(viajes);
             } catch (Exception e) {
-                e.printStackTrace();
                 return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar los viajes");
             }
         });
@@ -189,6 +189,9 @@ public class ViajeController {
                     if (users != null) {
                         if (users.contains(userId)) {
                             return ResponseEntity.status(CONFLICT).body("El usuario ya está unido al viaje");
+                        }
+                        if (users.size() >= viaje.getMaxCapacidad()) {
+                            return ResponseEntity.status(CONFLICT).body("El viaje ha alcanzado su capacidad máxima");
                         }
                         users.add(userId);
                         viaje.setUsers(users);
