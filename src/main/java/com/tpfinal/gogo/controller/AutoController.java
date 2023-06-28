@@ -124,7 +124,15 @@ public class AutoController {
             Auto auto = as.getAuto(id);
             if (auto != null) {
                 List<Viaje> viajes = vs.getViajesByAutoId(id);
-                if (viajes.isEmpty()) {
+                LocalDateTime now = LocalDateTime.now();
+                boolean hasNonExpiredViajes = false;
+                for (Viaje viaje : viajes) {
+                    if (viaje.getExpirationDate().isAfter(now)) {
+                        hasNonExpiredViajes = true;
+                        break;
+                    }
+                }
+                if (viajes.isEmpty() || !hasNonExpiredViajes) {
                     User user = auto.getUser();
                     user.setAuto(null);
                     us.updateUser(user.getId(), user);
