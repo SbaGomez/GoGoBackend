@@ -92,4 +92,8 @@ public class ViajeService {
         }
     }
 
+    public List<Viaje> getViajesByAutoId(int autoId) {
+        return vr.findByAutoId(autoId);
+    }
+
 }
