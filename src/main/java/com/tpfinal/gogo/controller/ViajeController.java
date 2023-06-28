@@ -173,21 +173,22 @@ public class ViajeController {
                 Viaje viaje = vs.getViaje(viajeId);
                 List<Integer> newUsers = new ArrayList<Integer>();
                 List<Integer> users = viaje.getUsers();
-                if (users != null) {
-                    if (users.contains(userId)) {
-                        return ResponseEntity.status(CONFLICT).body("El usuario ya está unido al viaje");
+                if (userId != viaje.getChofer()) {
+                    if (users != null) {
+                        if (users.contains(userId)) {
+                            return ResponseEntity.status(CONFLICT).body("El usuario ya está unido al viaje");
+                        }
+                        users.add(userId);
+                        viaje.setUsers(users);
                     }
-                    users.add(userId);
-                    viaje.setUsers(users);
+                    if (users == null) {
+                        newUsers.add(userId);
+                        viaje.setUsers(newUsers);
+                    }
+                    vs.joinLeaveViaje(viajeId, viaje);
+                    return ResponseEntity.status(OK).body(new ViajeResponse(viaje, "Viaje " + viajeId + " actualizado con éxito"));
                 }
-                if (users == null) {
-                    newUsers.add(userId);
-                    viaje.setUsers(newUsers);
-                }
-
-                vs.joinLeaveViaje(viajeId, viaje);
-
-                return ResponseEntity.status(OK).body(new ViajeResponse(viaje, "Viaje " + viajeId + " actualizado con éxito"));
+                return ResponseEntity.status(CONFLICT).body("El usuario no se puede unir a su propio viaje");
             } catch (Exception e) {
                 return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
             }
