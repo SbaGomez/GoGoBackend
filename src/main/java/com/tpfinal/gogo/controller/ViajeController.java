@@ -161,7 +161,7 @@ public class ViajeController {
             try {
                 List<ViajeUserAuto> viajes = vs.findMisViajesByIdPasajero(pasajeroId);
                 if (viajes.isEmpty()) {
-                    return ResponseEntity.status(NOT_FOUND).body("No se encontraron viajes");
+                    return ResponseEntity.status(NOT_FOUND).body("No se encontraron viajes pasajero");
                 }
                 return ResponseEntity.status(OK).body(viajes);
             } catch (Exception e) {
