@@ -170,16 +170,16 @@ public class AutoController {
         }
     }
 
-    @GetMapping("/patente/{patente}")
-    public ResponseEntity<Object> getAutoByPatente(@PathVariable final @NotNull String patente) {
-        try {
+    @Async
+    @PostMapping("/patenteExists")
+    public CompletableFuture<Boolean> patenteExists(@RequestBody Map<String, String> request) {
+        return CompletableFuture.supplyAsync(() -> {
+            String patente = request.get("patente");
             Auto auto = as.findByPatente(patente);
-            if (auto == null) {
-                return ResponseEntity.status(NOT_FOUND).body("Auto con patente (" + patente + ") no encontrado");
+            if (auto != null) {
+                return auto.getPatente().equals(patente);
             }
-            return ResponseEntity.status(OK).body(new AutoResponse(auto, "Auto con patente (" + patente + ") recuperado con éxito"));
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar el auto");
-        }
+            return false;
+        });
     }
 }
