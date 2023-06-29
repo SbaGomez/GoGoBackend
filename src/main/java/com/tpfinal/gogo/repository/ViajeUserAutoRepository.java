@@ -20,10 +20,11 @@ public interface ViajeUserAutoRepository extends JpaRepository<ViajeUserAuto, In
 
     @Query(value =
             "SELECT v.*, u.nombre, u.apellido, u.edad, u.sexo, a.color, a.marca, a.modelo, a.patente " +
-                    "FROM viaje v " +
-                    "INNER JOIN auto a ON a.id = v.auto_id " +
-                    "INNER JOIN user u ON u.id = v.chofer " +
-                    "WHERE v.users = :pasajeroId", nativeQuery = true)
+            "FROM viaje v " +
+            "INNER JOIN auto a ON a.id = v.auto_id " +
+            "INNER JOIN user u ON u.id = v.chofer " +
+            "WHERE FIND_IN_SET(:pasajeroId, v.users) > 0 " +
+            "GROUP BY v.id", nativeQuery = true)
     List<ViajeUserAuto> findViajesPasajero(Integer pasajeroId);
 
     @Query(value =
