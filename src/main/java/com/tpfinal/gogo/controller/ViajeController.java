@@ -125,19 +125,6 @@ public class ViajeController {
         }
     }
 
-    @PostMapping("/{id}/delete")
-    public ResponseEntity<String> deleteViaje(@PathVariable final @NotNull Integer id) {
-        try {
-            if (vs.existsById(id)) {
-                vs.deleteViaje(id);
-                return ResponseEntity.status(OK).body("Viaje " + id + " eliminado con éxito");
-            }
-            return ResponseEntity.status(NOT_FOUND).body("Viaje " + id + " no encontrado");
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Internal Server Error");
-        }
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Object> getViajeUserAuto(@PathVariable final @NotNull Integer id) {
         try {
@@ -243,6 +230,10 @@ public class ViajeController {
             try {
                 Viaje viaje = vs.getViaje(viajeId);
                 String usersString = viaje.getUsers();
+                if (userId == viaje.getChofer()) {
+                    vs.deleteViaje(viajeId);
+                    return ResponseEntity.status(OK).body("Viaje eliminado con éxito");
+                }
                 if (usersString != null && !usersString.isEmpty()) {
                     String[] userIdStrings = usersString.split(",");
                     List<String> remainingUserIds = new ArrayList<>();
