@@ -1,19 +1,18 @@
 package com.tpfinal.gogo.controller;
 
 import com.tpfinal.gogo.exceptions.BadRequestException;
-import com.tpfinal.gogo.model.Auto;
 import com.tpfinal.gogo.model.Viaje;
 import com.tpfinal.gogo.model.ViajeUserAuto;
 import com.tpfinal.gogo.service.AutoService;
 import com.tpfinal.gogo.service.UserService;
 import com.tpfinal.gogo.service.ViajeService;
 import com.tpfinal.gogo.tools.ValidateService;
-import io.micrometer.common.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -169,6 +168,22 @@ public class ViajeController {
     }
 
     @Async
+    @GetMapping("/buscarMisViajesPasajero/{pasajeroId}")
+    public CompletableFuture<ResponseEntity<Object>> getMisViajesPasajero(@PathVariable final @NotNull Integer pasajeroId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                List<ViajeUserAuto> viajes = vs.findMisViajesByIdPasajero(pasajeroId);
+                if (viajes.isEmpty()) {
+                    return ResponseEntity.status(NOT_FOUND).body("No se encontraron viajes");
+                }
+                return ResponseEntity.status(OK).body(viajes);
+            } catch (Exception e) {
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Hubo un error al recuperar los viajes");
+            }
+        });
+    }
+
+    @Async
     @GetMapping("/buscarUbicacion/{ubicacionInicioBuscarViaje}/{ubicacionDestinoBuscarViaje}")
     public CompletableFuture<ResponseEntity<Object>> getViajeByUbicacion(@PathVariable final @NotNull String ubicacionInicioBuscarViaje,
                                                                          @PathVariable final @NotNull String ubicacionDestinoBuscarViaje) {
@@ -191,23 +206,26 @@ public class ViajeController {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 Viaje viaje = vs.getViaje(viajeId);
-                List<Integer> newUsers = new ArrayList<Integer>();
-                List<Integer> users = viaje.getUsers();
+                String usersString = viaje.getUsers();
+                List<Integer> users = new ArrayList<>();
+                if (usersString != null && !usersString.isEmpty()) {
+                    String[] userIdStrings = usersString.split(",");
+                    for (String userIdString : userIdStrings) {
+                        users.add(Integer.parseInt(userIdString));
+                    }
+                }
                 if (userId != viaje.getChofer()) {
-                    if (users != null) {
-                        if (users.contains(userId)) {
-                            return ResponseEntity.status(CONFLICT).body("El usuario ya está unido al viaje");
-                        }
-                        if (users.size() >= viaje.getMaxCapacidad()) {
-                            return ResponseEntity.status(CONFLICT).body("El viaje ha alcanzado su capacidad máxima");
-                        }
-                        users.add(userId);
-                        viaje.setUsers(users);
+                    if (users.contains(userId)) {
+                        return ResponseEntity.status(CONFLICT).body("El usuario ya está unido al viaje");
                     }
-                    if (users == null) {
-                        newUsers.add(userId);
-                        viaje.setUsers(newUsers);
+                    if (users.size() >= viaje.getMaxCapacidad()) {
+                        return ResponseEntity.status(CONFLICT).body("El viaje ha alcanzado su capacidad máxima");
                     }
+
+                    users.add(userId);
+                    String newUsersString = StringUtils.join(users, ",");
+                    viaje.setUsers(newUsersString);
+
                     vs.joinLeaveViaje(viajeId, viaje);
                     return ResponseEntity.status(OK).body(new ViajeResponse(viaje, "Viaje " + viajeId + " actualizado con éxito"));
                 }
@@ -224,10 +242,17 @@ public class ViajeController {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 Viaje viaje = vs.getViaje(viajeId);
-                List<Integer> users = viaje.getUsers();
-                if (users != null) {
-                    users.remove(userId);
-                    viaje.setUsers(users);
+                String usersString = viaje.getUsers();
+                if (usersString != null && !usersString.isEmpty()) {
+                    String[] userIdStrings = usersString.split(",");
+                    List<String> remainingUserIds = new ArrayList<>();
+                    for (String userIdString : userIdStrings) {
+                        if (!userIdString.equals(Integer.toString(userId))) {
+                            remainingUserIds.add(userIdString);
+                        }
+                    }
+                    String newUsersString = String.join(",", remainingUserIds);
+                    viaje.setUsers(newUsersString);
                     vs.joinLeaveViaje(viajeId, viaje);
                     return ResponseEntity.status(OK).body("Viaje cancelado con éxito");
                 }

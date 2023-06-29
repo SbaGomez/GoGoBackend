@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
@@ -34,5 +33,5 @@ public class Viaje {
     @Column(name = "capacidad", nullable = false)
     private int maxCapacidad;
 
-    private List<Integer> users;
+    private String users;
 }

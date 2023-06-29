@@ -82,6 +82,10 @@ public class ViajeService {
         return vuar.findViajesUser(userId);
     }
 
+    public List<ViajeUserAuto> findMisViajesByIdPasajero(Integer pasajeroId) {
+        return vuar.findViajesPasajero(pasajeroId);
+    }
+
     public void joinLeaveViaje(Integer id, Viaje viaje) {
         Viaje v = vr.findById(id).orElse(null);
         if (v != null) {
