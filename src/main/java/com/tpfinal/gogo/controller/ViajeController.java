@@ -1,7 +1,6 @@
 package com.tpfinal.gogo.controller;
 
 import com.tpfinal.gogo.exceptions.BadRequestException;
-import com.tpfinal.gogo.model.Auto;
 import com.tpfinal.gogo.model.Viaje;
 import com.tpfinal.gogo.model.ViajeUserAuto;
 import com.tpfinal.gogo.service.AutoService;
