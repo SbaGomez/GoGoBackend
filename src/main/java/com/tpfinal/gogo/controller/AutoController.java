@@ -148,7 +148,7 @@ public class AutoController {
                     as.deleteAuto(id);
                     return ResponseEntity.status(OK).body("Auto " + id + " eliminado con éxito");
                 } else {
-                    return ResponseEntity.status(BAD_REQUEST).body("Auto " + id + " tiene un viaje en progreso");
+                    return ResponseEntity.status(BAD_REQUEST).body("El Auto tiene un viaje en progreso");
                 }
             }
             return ResponseEntity.status(NOT_FOUND).body("Auto " + id + " no encontrado");
