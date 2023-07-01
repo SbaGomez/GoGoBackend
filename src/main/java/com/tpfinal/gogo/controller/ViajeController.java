@@ -193,6 +193,12 @@ public class ViajeController {
     public CompletableFuture<ResponseEntity<Object>> joinViaje(@PathVariable final @NotNull Integer userId, @PathVariable final @NotNull Integer viajeId ) {
         return CompletableFuture.supplyAsync(() -> {
             try {
+                if (!us.existsById(userId)) {
+                    return ResponseEntity.status(BAD_REQUEST).body("El usuario no existe");
+                }
+                if (!vs.existsById(viajeId)) {
+                    return ResponseEntity.status(BAD_REQUEST).body("El viaje no existe");
+                }
                 Viaje viaje = vs.getViaje(viajeId);
                 String usersString = viaje.getUsers();
                 List<Integer> users = new ArrayList<>();
@@ -229,6 +235,12 @@ public class ViajeController {
     public CompletableFuture<ResponseEntity<Object>> leaveViaje(@PathVariable final @NotNull Integer userId, @PathVariable final @NotNull Integer viajeId ) {
         return CompletableFuture.supplyAsync(() -> {
             try {
+                if (!us.existsById(userId)) {
+                    return ResponseEntity.status(BAD_REQUEST).body("El usuario no existe");
+                }
+                if (!vs.existsById(viajeId)) {
+                    return ResponseEntity.status(BAD_REQUEST).body("El viaje no existe");
+                }
                 Viaje viaje = vs.getViaje(viajeId);
                 String usersString = viaje.getUsers();
                 if (userId == viaje.getChofer()) {
