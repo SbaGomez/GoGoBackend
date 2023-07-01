@@ -47,6 +47,7 @@ public class ViajeController {
             v.setHorarioSalida(LocalDateTime.parse(request.get("horarioSalida")));
             v.setTurno(request.get("turno"));
             v.setMaxCapacidad(Integer.parseInt(request.get("capacidad")));
+            v.setDetalle(request.get("detalle"));
 
             String inicio = request.get("inicio");
             String destino = request.get("destino");

@@ -27,6 +27,8 @@ public class Viaje {
     @Column(nullable = false)
     private String ubicacionDestino;
     @Column(nullable = false)
+    private String detalle;
+    @Column(nullable = false)
     private int chofer;
     @Column(nullable = false)
     private int autoId;

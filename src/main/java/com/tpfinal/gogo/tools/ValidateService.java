@@ -66,6 +66,9 @@ public class ValidateService {
         if (v.getUbicacionDestino() == null) {
             errors.add("El destino es requerido");
         }
+        if (v.getDetalle() == null) {
+            errors.add("El detalle es requerido");
+        }
         if (v.getTurno() == null) {
             errors.add("El turno es requerido");
         }

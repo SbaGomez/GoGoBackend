@@ -20,6 +20,7 @@ public class ViajeUserAuto {
     private String turno;
     private String ubicacionInicio;
     private String ubicacionDestino;
+    private String detalle;
     private int chofer;
     private int autoId;
     private int capacidad;
